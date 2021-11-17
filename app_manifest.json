@@ -1,0 +1,16 @@
+{
+  "SchemaVersion": 1,
+  "Name": "AzureSphereRemote",
+  "ComponentId": "283b16c8-d6a2-4d56-8abb-f390b0d3dda9",
+  "EntryPoint": "/bin/app",
+  "CmdArgs": [],
+  "Capabilities": {
+    "Gpio": [ 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 ],
+    "I2cMaster":[ "ISU2"],
+    "Pwm": [ "PWM-CONTROLLER-0" ],
+    "AllowedTcpServerPorts": [ 8888 ],
+    "NetworkConfig": true,
+    "PowerControls":["SetPowerProfile"]
+  },
+  "ApplicationType": "Default"
+}
