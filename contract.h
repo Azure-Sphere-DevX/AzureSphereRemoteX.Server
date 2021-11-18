@@ -10,6 +10,7 @@ typedef enum __attribute__((packed))
     GPIO_OpenAsInput_c,
     GPIO_SetValue_c,
     GPIO_GetValue_c,
+
     I2CMaster_Open_c,
     I2CMaster_SetBusSpeed_c,
     I2CMaster_SetTimeout_c,
@@ -17,9 +18,19 @@ typedef enum __attribute__((packed))
     I2CMaster_WriteThenRead_c,
     I2CMaster_Read_c,
     I2CMaster_SetDefaultTargetAddress_c,
+
     SPIMaster_Open_c,
+    SPIMaster_InitConfig_c,
+    SPIMaster_SetBusSpeed_c,
+    SPIMaster_SetMode_c,
+    SPIMaster_SetBitOrder_c,
+    SPIMaster_WriteThenRead_c,
+    SPIMaster_InitTransfers_c,
+    SPIMaster_TransferSequential_c,
+
     PWM_Open_c,
     PWM_Apply_c,
+
     ADC_Open_c,
     ADC_GetSampleBitCount_c,
     ADC_SetReferenceVoltage_c,
@@ -134,16 +145,6 @@ typedef struct __attribute__((packed))
 typedef struct __attribute__((packed))
 {
     SOCKET_CMD cmd;
-    int interfaceId;
-    int chipSelectId;
-    unsigned char csPolarity;
-    int returns;
-    int err_no;
-} SPIMaster_Open_t;
-
-typedef struct __attribute__((packed))
-{
-    SOCKET_CMD cmd;
     unsigned int pwm;
     int returns;
     int err_no;
@@ -199,3 +200,87 @@ typedef struct __attribute__((packed))
     int err_no;
 } ADC_Poll_t;
 
+typedef struct __attribute__((packed))
+{
+    SOCKET_CMD cmd;
+    int interfaceId;
+    int chipSelectId;
+    unsigned char csPolarity;
+    uint32_t z__magicAndVersion;
+    int returns;
+    int err_no;
+} SPIMaster_Open_t;
+
+typedef struct __attribute__((packed))
+{
+    SOCKET_CMD cmd;
+    unsigned char csPolarity;
+    uint32_t z__magicAndVersion;
+    int returns;
+    int err_no;
+} SPIMaster_InitConfig_t;
+
+typedef struct __attribute__((packed))
+{
+    SOCKET_CMD cmd;
+    int fd;
+    uint32_t speedInHz;
+    int returns;
+    int err_no;
+} SPIMaster_SetBusSpeed_t;
+
+typedef struct __attribute__((packed))
+{
+    SOCKET_CMD cmd;
+    int fd;
+    uint32_t mode;
+    int returns;
+    int err_no;
+} SPIMaster_SetMode_t;
+
+typedef struct __attribute__((packed))
+{
+    SOCKET_CMD cmd;
+    int fd;
+    uint32_t order;
+    int returns;
+    int err_no;
+} SPIMaster_SetBitOrder_t;
+
+typedef struct __attribute__((packed))
+{
+    SOCKET_CMD cmd;
+    int fd;
+    uint8_t data[32];
+    unsigned int lenWriteData;
+    unsigned int lenReadData;
+    uint32_t order;
+    int returns;
+    int err_no;
+} SPIMaster_WriteThenRead_t;
+
+typedef struct __attribute__((packed))
+{
+    SOCKET_CMD cmd;
+    uint32_t transferCount;
+    uint32_t z__magicAndVersion;
+    unsigned char flags;
+    uint32_t length;
+    int returns;
+    int err_no;
+
+} SPIMaster_InitTransfers_t;
+
+typedef struct __attribute__((packed))
+{
+    SOCKET_CMD cmd;
+    int fd;
+    uint32_t transferCount;
+    uint32_t z__magicAndVersion;
+    unsigned char flags;
+    uint32_t length;
+    uint8_t data[32];
+    int returns;
+    int err_no;
+
+} SPIMaster_TransferSequential_t;

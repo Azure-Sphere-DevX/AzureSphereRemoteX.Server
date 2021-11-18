@@ -16,8 +16,6 @@
 
 #include "echo_tcp_server.h"
 
-
-
 // Support functions.
 static void HandleListenEvent(EventLoop *el, int fd, EventLoop_IoEvents events, void *context);
 static void LaunchRead(EchoServer_ServerState *serverState);
@@ -29,25 +27,36 @@ static int OpenIpV4Socket(in_addr_t ipAddr, uint16_t port, int sockType, ExitCod
 static void ReportError(const char *desc);
 static void StopServer(EchoServer_ServerState *serverState, EchoServer_StopReason reason);
 
-static bool (*cmd_functions[])(uint8_t* buf, ssize_t nread) = { GPIO_OpenAsOutput_cmd,
-                                                        GPIO_OpenAsInput_cmd,
-                                                        GPIO_SetValue_cmd,
-                                                        GPIO_GetValue_cmd,
-                                                        I2CMaster_Open_cmd,
-                                                        I2CMaster_SetBusSpeed_cmd,
-                                                        I2CMaster_SetTimeout_cmd,
-                                                        I2CMaster_Write_cmd,
-                                                        I2CMaster_WriteThenRead_cmd,
-                                                        I2CMaster_SetDefaultTargetAddress_cmd,
-                                                        SPIMaster_Open_cmd,
-                                                        PWM_Open_cmd,
-                                                        PWM_Apply_cmd,
-                                                        ADC_Open_cmd,
-                                                        ADC_GetSampleBitCount_cmd,
-                                                        ADC_SetReferenceVoltage_cmd,
-                                                        ADC_Poll_cmd
-};
+static bool (*cmd_functions[])(uint8_t *buf, ssize_t nread) = {
+    GPIO_OpenAsOutput_cmd,
+    GPIO_OpenAsInput_cmd,
+    GPIO_SetValue_cmd,
+    GPIO_GetValue_cmd,
 
+    I2CMaster_Open_cmd,
+    I2CMaster_SetBusSpeed_cmd,
+    I2CMaster_SetTimeout_cmd,
+    I2CMaster_Write_cmd,
+    I2CMaster_WriteThenRead_cmd,
+    I2CMaster_Read_cmd,
+    I2CMaster_SetDefaultTargetAddress_cmd,
+
+    SPIMaster_Open_cmd,
+    SPIMaster_InitConfig_cmd,
+    SPIMaster_SetBusSpeed_cmd,
+    SPIMaster_SetMode_cmd,
+    SPIMaster_SetBitOrder_cmd,
+    SPIMaster_WriteThenRead_cmd,
+    SPIMaster_InitTransfers_cmd,
+    SPIMaster_TransferSequential_cmd,
+
+    PWM_Open_cmd,
+    PWM_Apply_cmd,
+
+    ADC_Open_cmd,
+    ADC_GetSampleBitCount_cmd,
+    ADC_SetReferenceVoltage_cmd,
+    ADC_Poll_cmd};
 
 EchoServer_ServerState *EchoServer_Start(EventLoop *eventLoopInstance, in_addr_t ipAddr,
                                          uint16_t port, int backlogSize,
@@ -205,19 +214,21 @@ static void HandleClientEvent(EventLoop *el, int fd, EventLoop_IoEvents events, 
     }
 }
 
-
 void process_command(EchoServer_ServerState *serverState, const uint8_t *buf, ssize_t nread)
 {
     bool cmd_found = false;
 
-    for (size_t i = 0; i < NELEMS(cmd_functions) && !cmd_found; i++)
-    {
-        cmd_found = cmd_functions[i]((uint8_t *)buf, nread);
-    }
+    Log_Debug("cmd: %d\n", buf[0]);
+    cmd_found = cmd_functions[buf[0]]((uint8_t *)buf, nread);
+
+    // for (size_t i = 0; i < NELEMS(cmd_functions) && !cmd_found; i++)
+    // {
+    //     cmd_found = cmd_functions[i]((uint8_t *)buf, nread);
+    // }
 
     if (!cmd_found)
     {
-        Log_Debug("recv: %s\n", buf);
+        Log_Debug("recv cmd not found: %d\n", buf[0]);
     }
 
     memcpy(serverState->input, buf, (size_t)nread);
