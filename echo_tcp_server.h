@@ -7,14 +7,8 @@
 
 #include "eventloop_timer_utilities.h"
 #include "exitcode_privnetserv.h"
-#include "contract.h"
-#include <applibs/gpio.h>
-#include <applibs/i2c.h>
-#include <applibs/spi.h>
-#include <applibs/pwm.h>
 #include <errno.h>
-
-#define NELEMS(x) (sizeof(x) / sizeof((x)[0]))
+#include "peripherals.h"
 
 /// <summary>Reason why the TCP server stopped.</summary>
 typedef enum {

@@ -10,5 +10,14 @@
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
     "cSpell.words": [
         "GPIO"
-    ]
+    ],
+    "files.associations": {
+        "unistd.h": "c"
+    },
+    "markdownlint.config": {
+        "MD028": false,
+        "MD025": {
+            "front_matter_title": ""
+        }
+    }
 }

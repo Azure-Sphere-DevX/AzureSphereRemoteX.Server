@@ -8,7 +8,7 @@ project(AzureSphereRemote C)
 azsphere_configure_tools(TOOLS_REVISION "21.10")
 azsphere_configure_api(TARGET_API_SET "11")
 
-add_executable(${PROJECT_NAME} main.c eventloop_timer_utilities.c echo_tcp_server.c)
+add_executable(${PROJECT_NAME} main.c eventloop_timer_utilities.c echo_tcp_server.c peripherals.c)
 target_link_libraries(${PROJECT_NAME} applibs gcc_s c)
 
 azsphere_target_add_image_package(${PROJECT_NAME})

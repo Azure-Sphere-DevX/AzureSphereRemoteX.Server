@@ -3,7 +3,7 @@
   "configurations": [
     {
       "type": "azurespheredbg",
-      "name": "PrivateNetworkServices (HLCore)",
+      "name": "AzureSphereRemote (HLCore)",
       "project": "CMakeLists.txt",
       "workingDirectory": "${workspaceRoot}",
       "applicationPath": "${debugInfo.target}",

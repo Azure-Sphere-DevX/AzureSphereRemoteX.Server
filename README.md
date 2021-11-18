@@ -6,7 +6,7 @@ products:
 - azure
 - azure-sphere
 name: Azure Sphere – Private network services
-urlFragment: PrivateNetworkServices
+urlFragment: AzureSphereRemote
 extendedZipContent:
 - path: HardwareDefinitions
   target: HardwareDefinitions
@@ -65,12 +65,12 @@ The sample requires the following hardware:
 1. Even if you've performed this set up previously, ensure that you have Azure Sphere SDK version 21.10 or above. At the command prompt, run **azsphere show-version** to check. Install [the Azure Sphere SDK](https://docs.microsoft.com/azure-sphere/install/install-sdk) as needed.
 1. Connect your Azure Sphere device to your computer by USB.
 1. Enable application development, if you have not already done so, by entering the **azsphere device enable-development** command at the command prompt.
-1. Clone the [Azure Sphere samples](https://github.com/Azure/azure-sphere-samples) repository and find the *PrivateNetworkServices* sample in the *PrivateNetworkServices* folder or download the zip file from the [Microsoft samples browser](https://docs.microsoft.com/samples/azure/azure-sphere-samples/privatenetworkservices/).
+1. Clone the [Azure Sphere samples](https://github.com/Azure/azure-sphere-samples) repository and find the *AzureSphereRemote* sample in the *AzureSphereRemote* folder or download the zip file from the [Microsoft samples browser](https://docs.microsoft.com/samples/azure/azure-sphere-samples/AzureSphereRemote/).
 1. Configure the sample for your network interface. This sample will run on any supported network interface. However, it is configured by default for a private Ethernet network.
 
     - To use Ethernet, you must connect and configure an Ethernet adapter to your MT3620 development board. See [Connect Azure Sphere to Ethernet](https://docs.microsoft.com/azure-sphere/network/connect-ethernet) for instructions.
 
-    - To use a different network interface, change the value of the global constant **NetworkInterface** in the source file `PrivateNetworkServices\main.c`. For example, to specify a Wi-Fi network, replace `eth0` with `wlan0` in the following code in `main.c`:
+    - To use a different network interface, change the value of the global constant **NetworkInterface** in the source file `AzureSphereRemote\main.c`. For example, to specify a Wi-Fi network, replace `eth0` with `wlan0` in the following code in `main.c`:
 
        ```c
        static const char NetworkInterface[] = "eth0";

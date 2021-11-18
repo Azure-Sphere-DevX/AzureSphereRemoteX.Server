@@ -3,8 +3,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
-// #include "spi.h"
-
 
 typedef enum __attribute__((packed))
 {
@@ -21,7 +19,11 @@ typedef enum __attribute__((packed))
     I2CMaster_SetDefaultTargetAddress_c,
     SPIMaster_Open_c,
     PWM_Open_c,
-    PWM_Apply_c
+    PWM_Apply_c,
+    ADC_Open_c,
+    ADC_GetSampleBitCount_c,
+    ADC_SetReferenceVoltage_c,
+    ADC_Poll_c
 } SOCKET_CMD;
 
 typedef struct __attribute__((packed))
@@ -159,3 +161,41 @@ typedef struct __attribute__((packed))
     int returns;
     int err_no;
 } PWM_Apply_t;
+
+typedef struct __attribute__((packed))
+{
+    SOCKET_CMD cmd;
+    uint32_t id;
+    int returns;
+    int err_no;
+} ADC_Open_t;
+
+typedef struct __attribute__((packed))
+{
+    SOCKET_CMD cmd;
+    int fd;
+    uint32_t channel;
+    int returns;
+    int err_no;
+} ADC_GetSampleBitCount_t;
+
+typedef struct __attribute__((packed))
+{
+    SOCKET_CMD cmd;
+    int fd;
+    uint32_t channel;
+    float referenceVoltage;
+    int returns;
+    int err_no;
+} ADC_SetReferenceVoltage_t;
+
+typedef struct __attribute__((packed))
+{
+    SOCKET_CMD cmd;
+    int fd;
+    uint32_t channel;
+    uint32_t outSampleValue;
+    int returns;
+    int err_no;
+} ADC_Poll_t;
+
