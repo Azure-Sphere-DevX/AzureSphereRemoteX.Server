@@ -11,10 +11,10 @@
 #include <stddef.h>
 
 #include <sys/socket.h>
-
 #include <applibs/log.h>
-
 #include "echo_tcp_server.h"
+
+static uint8_t buffer[1024 * 5];
 
 // Support functions.
 static void HandleListenEvent(EventLoop *el, int fd, EventLoop_IoEvents events, void *context);
@@ -239,7 +239,6 @@ void process_command(EchoServer_ServerState *serverState, const uint8_t *buf, ss
 
 static void HandleClientReadEvent(EchoServer_ServerState *serverState)
 {
-    static uint8_t buffer[1024];
     memset(buffer, 0x00, sizeof(buffer));
 
     EventLoop_ModifyIoEvents(serverState->eventLoop, serverState->clientEventReg, EventLoop_None);

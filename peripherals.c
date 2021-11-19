@@ -254,14 +254,9 @@ bool SPIMaster_Open_cmd(uint8_t *buf, ssize_t nread)
 
     data->returns = SPIMaster_Open(data->interfaceId, data->chipSelectId, &config);
     data->err_no = errno;
-
-    if (data->err_no == EACCES){
-        Log_Debug("EACCES\n");
-    }
-
     ledger_add_file_descriptor(data->returns);
 
-    // // Log_Debug("%s\n", __func__);
+    // Log_Debug("%s\n", __func__);
     return true;
 }
 
@@ -316,13 +311,12 @@ bool SPIMaster_SetBitOrder_cmd(uint8_t *buf, ssize_t nread)
 bool SPIMaster_WriteThenRead_cmd(uint8_t *buf, ssize_t nread)
 {
     SPIMaster_WriteThenRead_t *data = (SPIMaster_WriteThenRead_t *)buf;
+    uint8_t readData[data->lenReadData];
 
-    uint8_t read_data[data->lenReadData];
-
-    data->returns = SPIMaster_WriteThenRead(data->fd, data->data, data->lenWriteData, read_data, data->lenReadData);
+    data->returns = SPIMaster_WriteThenRead(data->fd, data->data, data->lenWriteData, readData, data->lenReadData);
     data->err_no = errno;
 
-    memcpy(data->data, read_data, data->lenReadData);
+    memcpy(data->data, readData, data->lenReadData);
 
     // // Log_Debug("%s\n", __func__);
     return true;
@@ -336,7 +330,7 @@ bool SPIMaster_InitTransfers_cmd(uint8_t *buf, ssize_t nread)
     transfer.z__magicAndVersion = data->z__magicAndVersion;
     transfer.flags = data->flags;
     transfer.length = data->length;
-    
+
     data->returns = SPIMaster_InitTransfers(&transfer, data->transferCount);
     data->err_no = errno;
 
@@ -355,29 +349,20 @@ bool SPIMaster_TransferSequential_cmd(uint8_t *buf, ssize_t nread)
     transfer.z__magicAndVersion = data->z__magicAndVersion;
     transfer.flags = data->flags;
     transfer.length = data->length;
-    
-    if (transfer.flags == SPI_TransferFlags_Write){
+
+    if (transfer.flags == SPI_TransferFlags_Write)
+    {
         transfer.writeData = data->data;
         transfer.readData = NULL;
-    } else if (transfer.flags == SPI_TransferFlags_Read){
+    }
+    else if (transfer.flags == SPI_TransferFlags_Read)
+    {
         transfer.readData = data->data;
         transfer.writeData = NULL;
     }
 
-    unsigned char spidata[2];
-	SPIMaster_Transfer spitransfer;
-
-	spidata[0] = 0x0f;
-	spidata[1] = 1;
-
-	SPIMaster_InitTransfers(&spitransfer, 1);
-	spitransfer.flags = SPI_TransferFlags_Write;
-	spitransfer.length = 2;
-	spitransfer.writeData = spidata;
-    
     data->returns = SPIMaster_TransferSequential(data->fd, &transfer, data->transferCount);
     data->err_no = errno;
 
     return true;
 }
-
