@@ -1,3 +1,6 @@
 [submodule "AzureSphereDevX"]
 	path = AzureSphereDevX
 	url = https://github.com/Azure-Sphere-DevX/AzureSphereDevX.git
+[submodule "tools"]
+	path = tools
+	url = https://github.com/Azure-Sphere-DevX/AzureSphereDevX.Tools.git
