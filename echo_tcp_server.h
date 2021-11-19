@@ -5,10 +5,11 @@
 
 #include "netinet/in.h"
 
-#include "eventloop_timer_utilities.h"
+#include "dx_terminate.h"
+#include "dx_timer.h"
 #include "exitcode_privnetserv.h"
-#include <errno.h>
 #include "peripherals.h"
+#include <errno.h>
 
 /// <summary>Reason why the TCP server stopped.</summary>
 typedef enum {
@@ -75,8 +76,7 @@ typedef struct {
 /// </summary>
 EchoServer_ServerState *EchoServer_Start(EventLoop *eventLoopInstance, in_addr_t ipAddr,
                                          uint16_t port, int backlogSize,
-                                         void (*shutdownCallback)(EchoServer_StopReason),
-                                         ExitCode *callerExitCode);
+                                         void (*shutdownCallback)(EchoServer_StopReason));
 
 /// <summary>
 /// <para>Closes any resources which were allocated by the supplied server. This includes

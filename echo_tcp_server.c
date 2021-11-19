@@ -23,7 +23,7 @@ static void HandleClientEvent(EventLoop *el, int fd, EventLoop_IoEvents events, 
 static void HandleClientReadEvent(EchoServer_ServerState *serverState);
 static void LaunchWrite(EchoServer_ServerState *serverState);
 static void HandleClientWriteEvent(EchoServer_ServerState *serverState);
-static int OpenIpV4Socket(in_addr_t ipAddr, uint16_t port, int sockType, ExitCode *callerExitCode);
+static int OpenIpV4Socket(in_addr_t ipAddr, uint16_t port, int sockType);
 static void ReportError(const char *desc);
 static void StopServer(EchoServer_ServerState *serverState, EchoServer_StopReason reason);
 
@@ -60,8 +60,7 @@ static bool (*cmd_functions[])(uint8_t *buf, ssize_t nread) = {
 
 EchoServer_ServerState *EchoServer_Start(EventLoop *eventLoopInstance, in_addr_t ipAddr,
                                          uint16_t port, int backlogSize,
-                                         void (*shutdownCallback)(EchoServer_StopReason),
-                                         ExitCode *callerExitCode)
+                                         void (*shutdownCallback)(EchoServer_StopReason))
 {
     EchoServer_ServerState *serverState = malloc(sizeof(*serverState));
     if (!serverState)
@@ -82,7 +81,7 @@ EchoServer_ServerState *EchoServer_Start(EventLoop *eventLoopInstance, in_addr_t
     serverState->shutdownCallback = shutdownCallback;
 
     int sockType = SOCK_STREAM | SOCK_CLOEXEC | SOCK_NONBLOCK;
-    serverState->listenFd = OpenIpV4Socket(ipAddr, port, sockType, callerExitCode);
+    serverState->listenFd = OpenIpV4Socket(ipAddr, port, sockType);
     if (serverState->listenFd == -1)
     {
         ReportError("open socket");
@@ -101,7 +100,7 @@ EchoServer_ServerState *EchoServer_Start(EventLoop *eventLoopInstance, in_addr_t
     if (result != 0)
     {
         ReportError("listen");
-        *callerExitCode = ExitCode_EchoStart_Listen;
+        dx_terminate(ExitCode_EchoStart_Listen);
         goto fail;
     }
 
@@ -216,15 +215,7 @@ static void HandleClientEvent(EventLoop *el, int fd, EventLoop_IoEvents events, 
 
 void process_command(EchoServer_ServerState *serverState, const uint8_t *buf, ssize_t nread)
 {
-    bool cmd_found = false;
-
-    Log_Debug("cmd: %d\n", buf[0]);
-    cmd_found = cmd_functions[buf[0]]((uint8_t *)buf, nread);
-
-    // for (size_t i = 0; i < NELEMS(cmd_functions) && !cmd_found; i++)
-    // {
-    //     cmd_found = cmd_functions[i]((uint8_t *)buf, nread);
-    // }
+    bool cmd_found = cmd_functions[buf[0]]((uint8_t *)buf, nread);
 
     if (!cmd_found)
     {
@@ -312,16 +303,10 @@ static void HandleClientWriteEvent(EchoServer_ServerState *serverState)
             return;
         }
     }
-
-    // If reached here then successfully sent entire payload so clean up and read next line from
-    // client.
-    // free(serverState->txPayload);
-    // serverState->txPayload = NULL;
-
     LaunchRead(serverState);
 }
 
-static int OpenIpV4Socket(in_addr_t ipAddr, uint16_t port, int sockType, ExitCode *callerExitCode)
+static int OpenIpV4Socket(in_addr_t ipAddr, uint16_t port, int sockType)
 {
     int localFd = -1;
     int retFd = -1;
@@ -333,7 +318,7 @@ static int OpenIpV4Socket(in_addr_t ipAddr, uint16_t port, int sockType, ExitCod
         if (localFd == -1)
         {
             ReportError("socket");
-            *callerExitCode = ExitCode_OpenIpV4_Socket;
+            dx_terminate(ExitCode_OpenIpV4_Socket);
             break;
         }
 
@@ -344,7 +329,7 @@ static int OpenIpV4Socket(in_addr_t ipAddr, uint16_t port, int sockType, ExitCod
         if (r != 0)
         {
             ReportError("setsockopt/SO_REUSEADDR");
-            *callerExitCode = ExitCode_OpenIpV4_SetSockOpt;
+            dx_terminate(ExitCode_OpenIpV4_SetSockOpt);
             break;
         }
 
@@ -359,7 +344,7 @@ static int OpenIpV4Socket(in_addr_t ipAddr, uint16_t port, int sockType, ExitCod
         if (r != 0)
         {
             ReportError("bind");
-            *callerExitCode = ExitCode_OpenIpV4_Bind;
+            dx_terminate(ExitCode_OpenIpV4_Bind);
             break;
         }
 

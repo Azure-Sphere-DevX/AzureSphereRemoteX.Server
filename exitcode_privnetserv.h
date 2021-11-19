@@ -35,4 +35,4 @@ typedef enum {
     ExitCode_OpenIpV4_Socket = 14,
     ExitCode_OpenIpV4_SetSockOpt = 15,
     ExitCode_OpenIpV4_Bind = 16
-} ExitCode;
+} App_ExitCode;
