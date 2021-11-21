@@ -65,7 +65,7 @@ bool GPIO_SetValue_cmd(uint8_t *buf, ssize_t nread)
     data->err_no = errno;
 
     // Log_Debug("%s\n", __func__);
-    return true;
+    return false;
 }
 
 bool GPIO_GetValue_cmd(uint8_t *buf, ssize_t nread)
@@ -119,25 +119,23 @@ bool I2CMaster_SetTimeout_cmd(uint8_t *buf, ssize_t nread)
 bool I2CMaster_Write_cmd(uint8_t *buf, ssize_t nread)
 {
     I2CMaster_Write_t *data = (I2CMaster_Write_t *)buf;
+    uint8_t *data_prt = buf + sizeof(I2CMaster_Write_t);
 
-    data->returns = I2CMaster_Write(data->fd, data->address, (const uint8_t *)data->data, data->length);
+    data->returns = I2CMaster_Write(data->fd, data->address, (const uint8_t *)data_prt, data->length);
     data->err_no = errno;
 
     // Log_Debug("%s\n", __func__);
-    return true;
+    return false;
 }
 
 bool I2CMaster_WriteThenRead_cmd(uint8_t *buf, ssize_t nread)
 {
     I2CMaster_WriteThenRead_t *data = (I2CMaster_WriteThenRead_t *)buf;
 
-    uint8_t read_data[data->lenReadData];
+    uint8_t* data_prt = buf + sizeof(I2CMaster_WriteThenRead_t);
 
-    data->returns = I2CMaster_WriteThenRead(data->fd, data->address, (const uint8_t *)data->data, data->lenWriteData, read_data, data->lenReadData);
+    data->returns = I2CMaster_WriteThenRead(data->fd, data->address, data_prt, data->lenWriteData, data_prt, data->lenReadData);
     data->err_no = errno;
-
-    memset(data->data, 0x00, sizeof(data->data));
-    memcpy(data->data, read_data, data->lenReadData);
 
     // Log_Debug("%s\n", __func__);
     return true;
@@ -192,7 +190,7 @@ bool PWM_Apply_cmd(uint8_t *buf, ssize_t nread)
     data->err_no = errno;
 
     // Log_Debug("%s\n", __func__);
-    return true;
+    return false;
 }
 
 bool ADC_Open_cmd(uint8_t *buf, ssize_t nread)
@@ -328,16 +326,11 @@ bool SPIMaster_InitTransfers_cmd(uint8_t *buf, ssize_t nread)
 
     SPIMaster_Transfer transfer;
     transfer.z__magicAndVersion = data->z__magicAndVersion;
-    transfer.flags = data->flags;
-    transfer.length = data->length;
 
     data->returns = SPIMaster_InitTransfers(&transfer, data->transferCount);
     data->err_no = errno;
 
     data->z__magicAndVersion = transfer.z__magicAndVersion;
-    data->flags = transfer.flags;
-    data->length = transfer.length;
-
     return true;
 }
 
@@ -352,17 +345,17 @@ bool SPIMaster_TransferSequential_cmd(uint8_t *buf, ssize_t nread)
 
     if (transfer.flags == SPI_TransferFlags_Write)
     {
-        transfer.writeData = data->data;
+        transfer.writeData = buf + sizeof(SPIMaster_TransferSequential_t);
         transfer.readData = NULL;
     }
     else if (transfer.flags == SPI_TransferFlags_Read)
     {
-        transfer.readData = data->data;
+        transfer.readData = buf + sizeof(SPIMaster_TransferSequential_t);
         transfer.writeData = NULL;
     }
 
     data->returns = SPIMaster_TransferSequential(data->fd, &transfer, data->transferCount);
     data->err_no = errno;
 
-    return true;
+    return transfer.flags == SPI_TransferFlags_Read;
 }
