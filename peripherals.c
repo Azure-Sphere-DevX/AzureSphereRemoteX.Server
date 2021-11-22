@@ -132,7 +132,7 @@ bool I2CMaster_WriteThenRead_cmd(uint8_t *buf, ssize_t nread)
 {
     I2CMaster_WriteThenRead_t *data = (I2CMaster_WriteThenRead_t *)buf;
 
-    uint8_t* data_prt = buf + sizeof(I2CMaster_WriteThenRead_t);
+    uint8_t *data_prt = buf + sizeof(I2CMaster_WriteThenRead_t);
 
     data->returns = I2CMaster_WriteThenRead(data->fd, data->address, data_prt, data->lenWriteData, data_prt, data->lenReadData);
     data->err_no = errno;
@@ -309,12 +309,11 @@ bool SPIMaster_SetBitOrder_cmd(uint8_t *buf, ssize_t nread)
 bool SPIMaster_WriteThenRead_cmd(uint8_t *buf, ssize_t nread)
 {
     SPIMaster_WriteThenRead_t *data = (SPIMaster_WriteThenRead_t *)buf;
-    uint8_t readData[data->lenReadData];
 
-    data->returns = SPIMaster_WriteThenRead(data->fd, data->data, data->lenWriteData, readData, data->lenReadData);
+    uint8_t *data_ptr = buf + sizeof(SPIMaster_WriteThenRead_t);
+
+    data->returns = SPIMaster_WriteThenRead(data->fd, data_ptr, data->lenWriteData, data_ptr, data->lenReadData);
     data->err_no = errno;
-
-    memcpy(data->data, readData, data->lenReadData);
 
     // // Log_Debug("%s\n", __func__);
     return true;
@@ -336,26 +335,59 @@ bool SPIMaster_InitTransfers_cmd(uint8_t *buf, ssize_t nread)
 
 bool SPIMaster_TransferSequential_cmd(uint8_t *buf, ssize_t nread)
 {
+    bool read_transfer = false;
+
     SPIMaster_TransferSequential_t *data = (SPIMaster_TransferSequential_t *)buf;
 
-    SPIMaster_Transfer transfer;
-    transfer.z__magicAndVersion = data->z__magicAndVersion;
-    transfer.flags = data->flags;
-    transfer.length = data->length;
+    SPIMaster_Transfer transfers[data->transferCount];
+    SPIMaster_InitTransfers(transfers, data->transferCount);
 
-    if (transfer.flags == SPI_TransferFlags_Write)
+    uint8_t *data_ptr = buf + sizeof(SPIMaster_TransferSequential_t);
+
+    for (size_t i = 0; i < data->transferCount; i++)
     {
-        transfer.writeData = buf + sizeof(SPIMaster_TransferSequential_t);
-        transfer.readData = NULL;
-    }
-    else if (transfer.flags == SPI_TransferFlags_Read)
-    {
-        transfer.readData = buf + sizeof(SPIMaster_TransferSequential_t);
-        transfer.writeData = NULL;
+        SPI_TransferConfig *transfer_config = (SPI_TransferConfig *)data_ptr;
+
+        transfers[i].flags = transfer_config->flags;
+        transfers[i].length = transfer_config->length;
+        transfers[i].readData = NULL;
+        transfers[i].writeData = NULL;
+
+        data_ptr += sizeof(SPI_TransferConfig);
+
+        if (transfer_config->flags == SPI_TransferFlags_Read)
+        {
+            read_transfer = true;
+        }
     }
 
-    data->returns = SPIMaster_TransferSequential(data->fd, &transfer, data->transferCount);
+    if (read_transfer)
+    {
+        data_ptr = buf + sizeof(SPIMaster_TransferSequential_t);
+
+        for (size_t i = 0; i < data->transferCount; i++)
+        {
+            if (transfers[i].flags == SPI_TransferFlags_Read)
+            {
+                transfers[i].readData = data_ptr;
+                data_ptr += transfers[i].length;
+            }
+        }
+    }
+    else
+    {
+        for (size_t i = 0; i < data->transferCount; i++)
+        {
+            if (transfers[i].flags == SPI_TransferFlags_Write)
+            {
+                transfers[i].writeData = data_ptr;
+                data_ptr += transfers[i].length;
+            }
+        }
+    }
+
+    data->returns = SPIMaster_TransferSequential(data->fd, transfers, data->transferCount);
     data->err_no = errno;
 
-    return transfer.flags == SPI_TransferFlags_Read;
+    return read_transfer;
 }
