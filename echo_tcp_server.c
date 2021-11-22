@@ -215,9 +215,11 @@ static void HandleClientEvent(EventLoop *el, int fd, EventLoop_IoEvents events, 
 
 void process_command(EchoServer_ServerState *serverState, const uint8_t *buf, ssize_t nread)
 {
-	bool cmd_found = cmd_functions[buf[2]]((uint8_t *)buf, nread);
+	CONTRACT_HEADER* header = (CONTRACT_HEADER*)buf;
+		
+	bool reponse_required = cmd_functions[header->cmd]((uint8_t *)buf, nread);
 
-	if (cmd_found)
+	if (reponse_required)
 	{
 		memcpy(serverState->input, buf, (size_t)nread);
 		serverState->inLineSize = (size_t)nread;
@@ -243,7 +245,6 @@ static void HandleClientReadEvent(EchoServer_ServerState *serverState)
 
 	while (state_machine < 3)
 	{
-
 		switch (state_machine)
 		{
 		case 0:
@@ -257,7 +258,8 @@ static void HandleClientReadEvent(EchoServer_ServerState *serverState)
 			block_length = (uint16_t)((byte_1 << 8 | byte_0) - 2);
 			buffer[0] = byte_0;
 			buffer[1] = byte_1;
-			if ((bytes_returned = read(serverState->clientFd, buffer + 2, (size_t)block_length)) != (size_t)block_length){
+			if ((bytes_returned = read(serverState->clientFd, buffer + 2, (size_t)block_length)) != (size_t)block_length)
+			{
 				Log_Debug("Block length not returned\n");
 			}
 			bytes_returned += 2; // add the first two bytes to bytes returned
