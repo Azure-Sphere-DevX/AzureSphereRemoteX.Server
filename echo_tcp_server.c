@@ -27,7 +27,7 @@ static int OpenIpV4Socket(in_addr_t ipAddr, uint16_t port, int sockType);
 static void ReportError(const char *desc);
 static void StopServer(EchoServer_ServerState *serverState, EchoServer_StopReason reason);
 
-static bool (*cmd_functions[])(uint8_t *buf, ssize_t nread) = {
+static int (*cmd_functions[])(uint8_t *buf, ssize_t nread) = {
 	GPIO_OpenAsOutput_cmd,
 	GPIO_OpenAsInput_cmd,
 	GPIO_SetValue_cmd,
@@ -215,19 +215,20 @@ static void HandleClientEvent(EventLoop *el, int fd, EventLoop_IoEvents events, 
 
 void process_command(EchoServer_ServerState *serverState, const uint8_t *buf, ssize_t nread)
 {
-	CONTRACT_HEADER* header = (CONTRACT_HEADER*)buf;
-		
-	bool reponse_required = cmd_functions[header->cmd]((uint8_t *)buf, nread);
+	CTX_HEADER *header = (CTX_HEADER *)buf;
 
-	if (reponse_required)
+	int reponse_size = cmd_functions[header->cmd]((uint8_t *)buf, nread);
+
+	// if response is less than zero don't write response back to client
+	if (reponse_size < 0)
 	{
-		memcpy(serverState->input, buf, (size_t)nread);
-		serverState->inLineSize = (size_t)nread;
-		LaunchWrite(serverState);
+		LaunchRead(serverState);
 	}
 	else
 	{
-		LaunchRead(serverState);
+		memcpy(serverState->input, buf, (size_t)reponse_size);
+		serverState->inLineSize = (size_t)reponse_size;
+		LaunchWrite(serverState);
 	}
 }
 

@@ -32,7 +32,7 @@ void ledger_close(void)
     }
 }
 
-bool GPIO_OpenAsOutput_cmd(uint8_t *buf, ssize_t nread)
+int GPIO_OpenAsOutput_cmd(uint8_t *buf, ssize_t nread)
 {
     GPIO_OpenAsOutput_t *data = (GPIO_OpenAsOutput_t *)buf;
 
@@ -41,11 +41,10 @@ bool GPIO_OpenAsOutput_cmd(uint8_t *buf, ssize_t nread)
 
     ledger_add_file_descriptor(data->returns);
 
-    // Log_Debug("%s\n", __func__);
-    return true;
+    return data->header.respond ? nread : -1;
 }
 
-bool GPIO_OpenAsInput_cmd(uint8_t *buf, ssize_t nread)
+int GPIO_OpenAsInput_cmd(uint8_t *buf, ssize_t nread)
 {
     GPIO_OpenAsInput_t *data = (GPIO_OpenAsInput_t *)buf;
 
@@ -54,21 +53,19 @@ bool GPIO_OpenAsInput_cmd(uint8_t *buf, ssize_t nread)
 
     ledger_add_file_descriptor(data->returns);
 
-    // Log_Debug("%s\n", __func__);
-    return true;
+    return data->header.respond ? nread : -1;
 }
 
-bool GPIO_SetValue_cmd(uint8_t *buf, ssize_t nread)
+int GPIO_SetValue_cmd(uint8_t *buf, ssize_t nread)
 {
     GPIO_SetValue_t *data = (GPIO_SetValue_t *)buf;
     data->returns = GPIO_SetValue(data->gpioFd, data->value);
     data->err_no = errno;
 
-    // Log_Debug("%s\n", __func__);
-    return false;
+    return data->header.respond ? nread : -1;
 }
 
-bool GPIO_GetValue_cmd(uint8_t *buf, ssize_t nread)
+int GPIO_GetValue_cmd(uint8_t *buf, ssize_t nread)
 {
     GPIO_Value_Type outValue;
 
@@ -77,11 +74,10 @@ bool GPIO_GetValue_cmd(uint8_t *buf, ssize_t nread)
     data->outValue = outValue;
     data->err_no = errno;
 
-    // Log_Debug("%s\n", __func__);
-    return true;
+    return data->header.respond ? nread : -1;
 }
 
-bool I2CMaster_Open_cmd(uint8_t *buf, ssize_t nread)
+int I2CMaster_Open_cmd(uint8_t *buf, ssize_t nread)
 {
     I2CMaster_Open_t *data = (I2CMaster_Open_t *)buf;
 
@@ -90,11 +86,10 @@ bool I2CMaster_Open_cmd(uint8_t *buf, ssize_t nread)
 
     ledger_add_file_descriptor(data->returns);
 
-    // Log_Debug("%s\n", __func__);
-    return true;
+    return data->header.respond ? nread : -1;
 }
 
-bool I2CMaster_SetBusSpeed_cmd(uint8_t *buf, ssize_t nread)
+int I2CMaster_SetBusSpeed_cmd(uint8_t *buf, ssize_t nread)
 {
     I2CMaster_SetBusSpeed_t *data = (I2CMaster_SetBusSpeed_t *)buf;
 
@@ -102,68 +97,64 @@ bool I2CMaster_SetBusSpeed_cmd(uint8_t *buf, ssize_t nread)
     data->err_no = errno;
 
     // Log_Debug("%s\n", __func__);
-    return true;
+    return data->header.respond ? nread : -1;
 }
 
-bool I2CMaster_SetTimeout_cmd(uint8_t *buf, ssize_t nread)
+int I2CMaster_SetTimeout_cmd(uint8_t *buf, ssize_t nread)
 {
     I2CMaster_SetTimeout_t *data = (I2CMaster_SetTimeout_t *)buf;
 
     data->returns = I2CMaster_SetTimeout(data->fd, data->timeoutInMs);
     data->err_no = errno;
 
-    // Log_Debug("%s\n", __func__);
-    return true;
+    return data->header.respond ? nread : -1;
 }
 
-bool I2CMaster_Write_cmd(uint8_t *buf, ssize_t nread)
+int I2CMaster_Write_cmd(uint8_t *buf, ssize_t nread)
 {
     I2CMaster_Write_t *data = (I2CMaster_Write_t *)buf;
-    uint8_t *data_prt = buf + sizeof(I2CMaster_Write_t);
 
-    data->returns = I2CMaster_Write(data->fd, data->address, (const uint8_t *)data_prt, data->length);
+    data->returns = I2CMaster_Write(data->fd, data->address, (const uint8_t *)data->data_block.data, data->data_block.length);
     data->err_no = errno;
 
-    // Log_Debug("%s\n", __func__);
-    return false;
+    return data->header.respond ? nread : -1;
 }
 
-bool I2CMaster_WriteThenRead_cmd(uint8_t *buf, ssize_t nread)
+int I2CMaster_WriteThenRead_cmd(uint8_t *buf, ssize_t nread)
 {
     I2CMaster_WriteThenRead_t *data = (I2CMaster_WriteThenRead_t *)buf;
 
-    uint8_t *data_prt = buf + sizeof(I2CMaster_WriteThenRead_t);
-
-    data->returns = I2CMaster_WriteThenRead(data->fd, data->address, data_prt, data->lenWriteData, data_prt, data->lenReadData);
+    data->returns = I2CMaster_WriteThenRead(data->fd, data->address, (const uint8_t *)data->data_block.data, data->lenWriteData, (uint8_t *)data->data_block.data, data->lenReadData);
     data->err_no = errno;
 
-    // Log_Debug("%s\n", __func__);
-    return true;
+    nread = (int)(sizeof(I2CMaster_WriteThenRead_t) -
+                  sizeof(((I2CMaster_WriteThenRead_t *)0)->data_block.data) +
+                  data->lenReadData);
+
+    return data->header.respond ? nread : -1;
 }
 
-bool I2CMaster_Read_cmd(uint8_t *buf, ssize_t nread)
+int I2CMaster_Read_cmd(uint8_t *buf, ssize_t nread)
 {
     I2CMaster_Read_t *data = (I2CMaster_Read_t *)buf;
 
-    data->returns = I2CMaster_Read(data->fd, data->address, data->data, data->maxLength);
+    data->returns = I2CMaster_Read(data->fd, data->address, data->data_block.data, data->data_block.length);
     data->err_no = errno;
 
-    // Log_Debug("%s\n", __func__);
-    return true;
+    return data->header.respond ? nread : -1;
 }
 
-bool I2CMaster_SetDefaultTargetAddress_cmd(uint8_t *buf, ssize_t nread)
+int I2CMaster_SetDefaultTargetAddress_cmd(uint8_t *buf, ssize_t nread)
 {
     I2CMaster_SetDefaultTargetAddress_t *data = (I2CMaster_SetDefaultTargetAddress_t *)buf;
 
     data->returns = I2CMaster_SetDefaultTargetAddress(data->fd, data->address);
     data->err_no = errno;
 
-    // Log_Debug("%s\n", __func__);
-    return true;
+    return data->header.respond ? nread : -1;
 }
 
-bool PWM_Open_cmd(uint8_t *buf, ssize_t nread)
+int PWM_Open_cmd(uint8_t *buf, ssize_t nread)
 {
     PWM_Open_t *data = (PWM_Open_t *)buf;
 
@@ -172,11 +163,10 @@ bool PWM_Open_cmd(uint8_t *buf, ssize_t nread)
 
     ledger_add_file_descriptor(data->returns);
 
-    // Log_Debug("%s\n", __func__);
-    return true;
+    return data->header.respond ? nread : -1;
 }
 
-bool PWM_Apply_cmd(uint8_t *buf, ssize_t nread)
+int PWM_Apply_cmd(uint8_t *buf, ssize_t nread)
 {
     PWM_Apply_t *data = (PWM_Apply_t *)buf;
 
@@ -189,11 +179,10 @@ bool PWM_Apply_cmd(uint8_t *buf, ssize_t nread)
     data->returns = PWM_Apply(data->pwmFd, data->pwmChannel, &newState);
     data->err_no = errno;
 
-    // Log_Debug("%s\n", __func__);
-    return false;
+    return data->header.respond ? nread : -1;
 }
 
-bool ADC_Open_cmd(uint8_t *buf, ssize_t nread)
+int ADC_Open_cmd(uint8_t *buf, ssize_t nread)
 {
     ADC_Open_t *data = (ADC_Open_t *)buf;
 
@@ -202,33 +191,30 @@ bool ADC_Open_cmd(uint8_t *buf, ssize_t nread)
 
     ledger_add_file_descriptor(data->returns);
 
-    // Log_Debug("%s\n", __func__);
-    return true;
+    return data->header.respond ? nread : -1;
 }
 
-bool ADC_GetSampleBitCount_cmd(uint8_t *buf, ssize_t nread)
+int ADC_GetSampleBitCount_cmd(uint8_t *buf, ssize_t nread)
 {
     ADC_GetSampleBitCount_t *data = (ADC_GetSampleBitCount_t *)buf;
 
     data->returns = ADC_GetSampleBitCount(data->fd, data->channel);
     data->err_no = errno;
 
-    // Log_Debug("%s\n", __func__);
-    return true;
+    return data->header.respond ? nread : -1;
 }
 
-bool ADC_SetReferenceVoltage_cmd(uint8_t *buf, ssize_t nread)
+int ADC_SetReferenceVoltage_cmd(uint8_t *buf, ssize_t nread)
 {
     ADC_SetReferenceVoltage_t *data = (ADC_SetReferenceVoltage_t *)buf;
 
     data->returns = ADC_SetReferenceVoltage(data->fd, data->channel, data->referenceVoltage);
     data->err_no = errno;
 
-    // Log_Debug("%s\n", __func__);
-    return true;
+    return data->header.respond ? nread : -1;
 }
 
-bool ADC_Poll_cmd(uint8_t *buf, ssize_t nread)
+int ADC_Poll_cmd(uint8_t *buf, ssize_t nread)
 {
     ADC_Poll_t *data = (ADC_Poll_t *)buf;
 
@@ -238,11 +224,10 @@ bool ADC_Poll_cmd(uint8_t *buf, ssize_t nread)
     data->outSampleValue = outSampleValue;
     data->err_no = errno;
 
-    // Log_Debug("%s\n", __func__);
-    return true;
+    return data->header.respond ? nread : -1;
 }
 
-bool SPIMaster_Open_cmd(uint8_t *buf, ssize_t nread)
+int SPIMaster_Open_cmd(uint8_t *buf, ssize_t nread)
 {
     SPIMaster_Open_t *data = (SPIMaster_Open_t *)buf;
 
@@ -254,11 +239,10 @@ bool SPIMaster_Open_cmd(uint8_t *buf, ssize_t nread)
     data->err_no = errno;
     ledger_add_file_descriptor(data->returns);
 
-    // Log_Debug("%s\n", __func__);
-    return true;
+    return data->header.respond ? nread : -1;
 }
 
-bool SPIMaster_InitConfig_cmd(uint8_t *buf, ssize_t nread)
+int SPIMaster_InitConfig_cmd(uint8_t *buf, ssize_t nread)
 {
     SPIMaster_InitConfig_t *data = (SPIMaster_InitConfig_t *)buf;
     SPIMaster_Config config;
@@ -269,57 +253,64 @@ bool SPIMaster_InitConfig_cmd(uint8_t *buf, ssize_t nread)
     data->csPolarity = config.csPolarity;
     data->z__magicAndVersion = config.z__magicAndVersion;
 
-    // // Log_Debug("%s\n", __func__);
-    return true;
+    return data->header.respond ? nread : -1;
 }
 
-bool SPIMaster_SetBusSpeed_cmd(uint8_t *buf, ssize_t nread)
+int SPIMaster_SetBusSpeed_cmd(uint8_t *buf, ssize_t nread)
 {
     SPIMaster_SetBusSpeed_t *data = (SPIMaster_SetBusSpeed_t *)buf;
 
     data->returns = SPIMaster_SetBusSpeed(data->fd, data->speedInHz);
     data->err_no = errno;
 
-    // // Log_Debug("%s\n", __func__);
-    return true;
+    return data->header.respond ? nread : -1;
 }
 
-bool SPIMaster_SetMode_cmd(uint8_t *buf, ssize_t nread)
+int SPIMaster_SetMode_cmd(uint8_t *buf, ssize_t nread)
 {
     SPIMaster_SetMode_t *data = (SPIMaster_SetMode_t *)buf;
 
     data->returns = SPIMaster_SetMode(data->fd, data->mode);
     data->err_no = errno;
 
-    // // Log_Debug("%s\n", __func__);
-    return true;
+    return data->header.respond ? nread : -1;
 }
 
-bool SPIMaster_SetBitOrder_cmd(uint8_t *buf, ssize_t nread)
+int SPIMaster_SetBitOrder_cmd(uint8_t *buf, ssize_t nread)
 {
     SPIMaster_SetBitOrder_t *data = (SPIMaster_SetBitOrder_t *)buf;
 
     data->returns = SPIMaster_SetBitOrder(data->fd, data->order);
     data->err_no = errno;
 
-    // // Log_Debug("%s\n", __func__);
-    return true;
+    return data->header.respond ? nread : -1;
 }
 
-bool SPIMaster_WriteThenRead_cmd(uint8_t *buf, ssize_t nread)
+int SPIMaster_WriteThenRead_cmd(uint8_t *buf, ssize_t nread)
 {
     SPIMaster_WriteThenRead_t *data = (SPIMaster_WriteThenRead_t *)buf;
 
-    uint8_t *data_ptr = buf + sizeof(SPIMaster_WriteThenRead_t);
+    // uint8_t *data_ptr = data->data_block.data;
 
-    data->returns = SPIMaster_WriteThenRead(data->fd, data_ptr, data->lenWriteData, data_ptr, data->lenReadData);
+    data->returns = SPIMaster_WriteThenRead(data->fd,
+                                            (const uint8_t *)data->data_block.data,
+                                            data->lenWriteData,
+                                            data->data_block.data,
+                                            data->lenReadData);
     data->err_no = errno;
+    data->data_block.length = (uint16_t)data->lenReadData;
 
-    // // Log_Debug("%s\n", __func__);
-    return true;
+    // The calculated return size is the size of the total data structure,
+    // minus the size of the datablock,
+    // plus the size of the data to be returned
+    nread = (int)(sizeof(SPIMaster_WriteThenRead_t) -
+                  sizeof(((SPIMaster_WriteThenRead_t *)0)->data_block.data) +
+                  data->lenReadData);
+
+    return data->header.respond ? nread : -1;
 }
 
-bool SPIMaster_InitTransfers_cmd(uint8_t *buf, ssize_t nread)
+int SPIMaster_InitTransfers_cmd(uint8_t *buf, ssize_t nread)
 {
     SPIMaster_InitTransfers_t *data = (SPIMaster_InitTransfers_t *)buf;
 
@@ -330,19 +321,20 @@ bool SPIMaster_InitTransfers_cmd(uint8_t *buf, ssize_t nread)
     data->err_no = errno;
 
     data->z__magicAndVersion = transfer.z__magicAndVersion;
-    return true;
+
+    return data->header.respond ? nread : -1;
 }
 
-bool SPIMaster_TransferSequential_cmd(uint8_t *buf, ssize_t nread)
+int SPIMaster_TransferSequential_cmd(uint8_t *buf, ssize_t nread)
 {
-    bool read_transfer = false;
+    bool read_transfer = false, write_transfer = false;
 
     SPIMaster_TransferSequential_t *data = (SPIMaster_TransferSequential_t *)buf;
 
     SPIMaster_Transfer transfers[data->transferCount];
     SPIMaster_InitTransfers(transfers, data->transferCount);
 
-    uint8_t *data_ptr = buf + sizeof(SPIMaster_TransferSequential_t);
+    uint8_t *data_ptr = data->data_block.data;
 
     for (size_t i = 0; i < data->transferCount; i++)
     {
@@ -355,39 +347,42 @@ bool SPIMaster_TransferSequential_cmd(uint8_t *buf, ssize_t nread)
 
         data_ptr += sizeof(SPI_TransferConfig);
 
-        if (transfer_config->flags == SPI_TransferFlags_Read)
-        {
-            read_transfer = true;
-        }
+        read_transfer = transfer_config->flags == SPI_TransferFlags_Read ? true : read_transfer;
+        write_transfer = transfer_config->flags == SPI_TransferFlags_Write ? true : write_transfer;
+    }
+
+    if (read_transfer && write_transfer)
+    {
+        Log_Debug("can't mix read and write transfers on a single SPI transaction\n");
     }
 
     if (read_transfer)
     {
-        data_ptr = buf + sizeof(SPIMaster_TransferSequential_t);
+        data_ptr = data->data_block.data;
+        data->data_block.length = 0;
 
         for (size_t i = 0; i < data->transferCount; i++)
         {
-            if (transfers[i].flags == SPI_TransferFlags_Read)
-            {
-                transfers[i].readData = data_ptr;
-                data_ptr += transfers[i].length;
-            }
+            transfers[i].readData = data_ptr;
+            data_ptr += transfers[i].length;
+            data->data_block.length = (uint16_t)(data->data_block.length + transfers[i].length);
         }
+
+        nread = (int)(sizeof(SPIMaster_TransferSequential_t) -
+                      sizeof(((SPIMaster_TransferSequential_t *)0)->data_block.data) +
+                      data->data_block.length);
     }
     else
     {
         for (size_t i = 0; i < data->transferCount; i++)
         {
-            if (transfers[i].flags == SPI_TransferFlags_Write)
-            {
-                transfers[i].writeData = data_ptr;
-                data_ptr += transfers[i].length;
-            }
+            transfers[i].writeData = data_ptr;
+            data_ptr += transfers[i].length;
         }
     }
 
     data->returns = SPIMaster_TransferSequential(data->fd, transfers, data->transferCount);
     data->err_no = errno;
 
-    return read_transfer;
+    return data->header.respond ? nread : -1;
 }

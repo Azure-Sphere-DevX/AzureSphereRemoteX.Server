@@ -42,11 +42,24 @@ typedef struct __attribute__((packed))
     uint16_t block_length;
     SOCKET_CMD cmd;
     bool respond;
-} CONTRACT_HEADER;
+} CTX_HEADER;
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    uint8_t flags;
+    uint16_t length;
+} SPI_TransferConfig;
+
+// Note the data block sent is variable length but not greater that 4096 and must be the last field in control block
+typedef struct __attribute__((packed))
+{
+    uint16_t length;
+    uint8_t data[4096];
+} DATA_BLOCK;
+
+typedef struct __attribute__((packed))
+{
+    CTX_HEADER header;
     int gpioId;
     uint8_t outputMode;
     uint8_t initialValue;
@@ -56,7 +69,7 @@ typedef struct __attribute__((packed))
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     int gpioId;
     int returns;
     int err_no;
@@ -64,7 +77,7 @@ typedef struct __attribute__((packed))
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     int gpioFd;
     uint8_t value;
     int returns;
@@ -73,7 +86,7 @@ typedef struct __attribute__((packed))
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     int gpioFd;
     uint8_t outValue;
     int returns;
@@ -82,7 +95,7 @@ typedef struct __attribute__((packed))
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     int I2C_InterfaceId;
     int returns;
     int err_no;
@@ -90,7 +103,7 @@ typedef struct __attribute__((packed))
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     int fd;
     uint32_t speedInHz;
     int returns;
@@ -99,7 +112,7 @@ typedef struct __attribute__((packed))
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     int fd;
     uint32_t timeoutInMs;
     int returns;
@@ -108,39 +121,40 @@ typedef struct __attribute__((packed))
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     int fd;
     unsigned char address;
-    unsigned int length;
     int returns;
     int err_no;
+    DATA_BLOCK data_block; // Must be the last element in the struct
 } I2CMaster_Write_t;
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     int fd;
     unsigned char address;
     unsigned int lenWriteData;
     unsigned int lenReadData;
     int returns;
     int err_no;
+    DATA_BLOCK data_block; // Must be the last element in the struct
 } I2CMaster_WriteThenRead_t;
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     int fd;
     unsigned char address;
     unsigned int maxLength;
     int returns;
     int err_no;
-    unsigned char data[32];
+    DATA_BLOCK data_block; // Must be the last element in the struct
 } I2CMaster_Read_t;
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     int fd;
     unsigned char address;
     int returns;
@@ -149,7 +163,7 @@ typedef struct __attribute__((packed))
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     unsigned int pwm;
     int returns;
     int err_no;
@@ -157,7 +171,7 @@ typedef struct __attribute__((packed))
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     int pwmFd;
     uint32_t pwmChannel;
     unsigned int period_nsec;
@@ -170,7 +184,7 @@ typedef struct __attribute__((packed))
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     uint32_t id;
     int returns;
     int err_no;
@@ -178,7 +192,7 @@ typedef struct __attribute__((packed))
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     int fd;
     uint32_t channel;
     int returns;
@@ -187,7 +201,7 @@ typedef struct __attribute__((packed))
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     int fd;
     uint32_t channel;
     float referenceVoltage;
@@ -197,7 +211,7 @@ typedef struct __attribute__((packed))
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     int fd;
     uint32_t channel;
     uint32_t outSampleValue;
@@ -207,7 +221,7 @@ typedef struct __attribute__((packed))
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     int interfaceId;
     int chipSelectId;
     unsigned char csPolarity;
@@ -218,7 +232,7 @@ typedef struct __attribute__((packed))
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     unsigned char csPolarity;
     uint32_t z__magicAndVersion;
     int returns;
@@ -227,7 +241,7 @@ typedef struct __attribute__((packed))
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     int fd;
     uint32_t speedInHz;
     int returns;
@@ -236,7 +250,7 @@ typedef struct __attribute__((packed))
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     int fd;
     uint32_t mode;
     int returns;
@@ -245,7 +259,7 @@ typedef struct __attribute__((packed))
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     int fd;
     uint32_t order;
     int returns;
@@ -254,37 +268,31 @@ typedef struct __attribute__((packed))
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     int fd;
     unsigned int lenWriteData;
     unsigned int lenReadData;
     uint32_t order;
     int returns;
     int err_no;
+    DATA_BLOCK data_block; // Must be the last element in the struct
 } SPIMaster_WriteThenRead_t;
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     uint32_t transferCount;
     uint32_t z__magicAndVersion;
     int returns;
     int err_no;
-
 } SPIMaster_InitTransfers_t;
 
 typedef struct __attribute__((packed))
 {
-    CONTRACT_HEADER header;
+    CTX_HEADER header;
     int fd;
     uint32_t transferCount;
     int returns;
     int err_no;
-
+    DATA_BLOCK data_block; // Must be the last element in the struct
 } SPIMaster_TransferSequential_t;
-
-typedef struct __attribute__((packed))
-{
-    uint8_t flags;
-    uint16_t length;
-} SPI_TransferConfig;
