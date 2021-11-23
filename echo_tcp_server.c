@@ -47,7 +47,6 @@ static int (*cmd_functions[])(uint8_t *buf, ssize_t nread) = {
 	SPIMaster_SetMode_cmd,
 	SPIMaster_SetBitOrder_cmd,
 	SPIMaster_WriteThenRead_cmd,
-	SPIMaster_InitTransfers_cmd,
 	SPIMaster_TransferSequential_cmd,
 
 	PWM_Open_cmd,

@@ -25,7 +25,6 @@ typedef enum __attribute__((packed))
     SPIMaster_SetMode_c,
     SPIMaster_SetBitOrder_c,
     SPIMaster_WriteThenRead_c,
-    SPIMaster_InitTransfers_c,
     SPIMaster_TransferSequential_c,
 
     PWM_Open_c,

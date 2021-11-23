@@ -117,6 +117,9 @@ int I2CMaster_Write_cmd(uint8_t *buf, ssize_t nread)
     data->returns = I2CMaster_Write(data->fd, data->address, (const uint8_t *)data->data_block.data, data->data_block.length);
     data->err_no = errno;
 
+    // just return the core control block length minus the data block length
+    nread = (int)(sizeof(I2CMaster_Write_t) - sizeof(((I2CMaster_Write_t *)0)->data_block));
+
     return data->header.respond ? nread : -1;
 }
 
@@ -140,6 +143,10 @@ int I2CMaster_Read_cmd(uint8_t *buf, ssize_t nread)
 
     data->returns = I2CMaster_Read(data->fd, data->address, data->data_block.data, data->data_block.length);
     data->err_no = errno;
+
+    nread = (int)(sizeof(I2CMaster_Read_t) -
+                  sizeof(((I2CMaster_Read_t *)0)->data_block.data) +
+                  data->data_block.length);
 
     return data->header.respond ? nread : -1;
 }
@@ -310,20 +317,20 @@ int SPIMaster_WriteThenRead_cmd(uint8_t *buf, ssize_t nread)
     return data->header.respond ? nread : -1;
 }
 
-int SPIMaster_InitTransfers_cmd(uint8_t *buf, ssize_t nread)
-{
-    SPIMaster_InitTransfers_t *data = (SPIMaster_InitTransfers_t *)buf;
+// int SPIMaster_InitTransfers_cmd(uint8_t *buf, ssize_t nread)
+// {
+//     SPIMaster_InitTransfers_t *data = (SPIMaster_InitTransfers_t *)buf;
 
-    SPIMaster_Transfer transfer;
-    transfer.z__magicAndVersion = data->z__magicAndVersion;
+//     SPIMaster_Transfer transfer;
+//     transfer.z__magicAndVersion = data->z__magicAndVersion;
 
-    data->returns = SPIMaster_InitTransfers(&transfer, data->transferCount);
-    data->err_no = errno;
+//     data->returns = SPIMaster_InitTransfers(&transfer, data->transferCount);
+//     data->err_no = errno;
 
-    data->z__magicAndVersion = transfer.z__magicAndVersion;
+//     data->z__magicAndVersion = transfer.z__magicAndVersion;
 
-    return data->header.respond ? nread : -1;
-}
+//     return data->header.respond ? nread : -1;
+// }
 
 int SPIMaster_TransferSequential_cmd(uint8_t *buf, ssize_t nread)
 {
@@ -372,13 +379,16 @@ int SPIMaster_TransferSequential_cmd(uint8_t *buf, ssize_t nread)
                       sizeof(((SPIMaster_TransferSequential_t *)0)->data_block.data) +
                       data->data_block.length);
     }
-    else
+
+    if (write_transfer)
     {
         for (size_t i = 0; i < data->transferCount; i++)
         {
             transfers[i].writeData = data_ptr;
             data_ptr += transfers[i].length;
         }
+        // just return the core control block length minus the data block length
+        nread = (int)(sizeof(SPIMaster_TransferSequential_t) - sizeof(((SPIMaster_TransferSequential_t *)0)->data_block));
     }
 
     data->returns = SPIMaster_TransferSequential(data->fd, transfers, data->transferCount);
