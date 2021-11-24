@@ -28,34 +28,34 @@ static void ReportError(const char *desc);
 static void StopServer(EchoServer_ServerState *serverState, EchoServer_StopReason reason);
 
 static int (*cmd_functions[])(uint8_t *buf, ssize_t nread) = {
-	GPIO_OpenAsOutput_cmd,
-	GPIO_OpenAsInput_cmd,
-	GPIO_SetValue_cmd,
-	GPIO_GetValue_cmd,
+	ADD_CMD(GPIO_OpenAsOutput),
+	ADD_CMD(GPIO_OpenAsInput),
+	ADD_CMD(GPIO_SetValue),
+	ADD_CMD(GPIO_GetValue),
 
-	I2CMaster_Open_cmd,
-	I2CMaster_SetBusSpeed_cmd,
-	I2CMaster_SetTimeout_cmd,
-	I2CMaster_Write_cmd,
-	I2CMaster_WriteThenRead_cmd,
-	I2CMaster_Read_cmd,
-	I2CMaster_SetDefaultTargetAddress_cmd,
+	ADD_CMD(I2CMaster_Open),
+	ADD_CMD(I2CMaster_SetBusSpeed),
+	ADD_CMD(I2CMaster_SetTimeout),
+	ADD_CMD(I2CMaster_Write),
+	ADD_CMD(I2CMaster_WriteThenRead),
+	ADD_CMD(I2CMaster_Read),
+	ADD_CMD(I2CMaster_SetDefaultTargetAddress),
 
-	SPIMaster_Open_cmd,
-	SPIMaster_InitConfig_cmd,
-	SPIMaster_SetBusSpeed_cmd,
-	SPIMaster_SetMode_cmd,
-	SPIMaster_SetBitOrder_cmd,
-	SPIMaster_WriteThenRead_cmd,
-	SPIMaster_TransferSequential_cmd,
+	ADD_CMD(SPIMaster_Open),
+	ADD_CMD(SPIMaster_InitConfig),
+	ADD_CMD(SPIMaster_SetBusSpeed),
+	ADD_CMD(SPIMaster_SetMode),
+	ADD_CMD(SPIMaster_SetBitOrder),
+	ADD_CMD(SPIMaster_WriteThenRead),
+	ADD_CMD(SPIMaster_TransferSequential),
 
-	PWM_Open_cmd,
-	PWM_Apply_cmd,
+	ADD_CMD(PWM_Open),
+	ADD_CMD(PWM_Apply),
 
-	ADC_Open_cmd,
-	ADC_GetSampleBitCount_cmd,
-	ADC_SetReferenceVoltage_cmd,
-	ADC_Poll_cmd};
+	ADD_CMD(ADC_Open),
+	ADD_CMD(ADC_GetSampleBitCount),
+	ADD_CMD(ADC_SetReferenceVoltage),
+	ADD_CMD(ADC_Poll)};
 
 EchoServer_ServerState *EchoServer_Start(EventLoop *eventLoopInstance, in_addr_t ipAddr,
 										 uint16_t port, int backlogSize,

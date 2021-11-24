@@ -12,7 +12,9 @@
         "GPIO"
     ],
     "files.associations": {
-        "unistd.h": "c"
+        "unistd.h": "c",
+        "echo_tcp_server.h": "c",
+        "peripherals.h": "c"
     },
     "markdownlint.config": {
         "MD028": false,

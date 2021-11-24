@@ -13,6 +13,18 @@
 #include <applibs/log.h>
 #include <unistd.h>
 
+
+#define BEGIN_CMD(command, data, length)                   \
+    int command##_cmd(uint8_t *buf, ssize_t length) \
+    {                                              \
+        command##_t *data = (command##_t *)buf;
+
+#define END_CMD(command, returns) \
+    return returns;               \
+    }
+
+#define ADD_CMD(command) command##_cmd
+
 #define NELEMS(x) (sizeof(x) / sizeof((x)[0]))
 
 #define LEDGE_SIZE 128
