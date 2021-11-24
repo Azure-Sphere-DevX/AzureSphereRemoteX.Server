@@ -41,7 +41,7 @@ int GPIO_OpenAsOutput_cmd(uint8_t *buf, ssize_t nread)
 
     ledger_add_file_descriptor(data->returns);
 
-    return data->header.respond ? nread : -1;
+    return nread;
 }
 
 int GPIO_OpenAsInput_cmd(uint8_t *buf, ssize_t nread)
@@ -53,7 +53,7 @@ int GPIO_OpenAsInput_cmd(uint8_t *buf, ssize_t nread)
 
     ledger_add_file_descriptor(data->returns);
 
-    return data->header.respond ? nread : -1;
+    return nread;
 }
 
 int GPIO_SetValue_cmd(uint8_t *buf, ssize_t nread)
@@ -74,7 +74,7 @@ int GPIO_GetValue_cmd(uint8_t *buf, ssize_t nread)
     data->outValue = outValue;
     data->err_no = errno;
 
-    return data->header.respond ? nread : -1;
+    return nread;
 }
 
 int I2CMaster_Open_cmd(uint8_t *buf, ssize_t nread)
@@ -86,7 +86,7 @@ int I2CMaster_Open_cmd(uint8_t *buf, ssize_t nread)
 
     ledger_add_file_descriptor(data->returns);
 
-    return data->header.respond ? nread : -1;
+    return nread;
 }
 
 int I2CMaster_SetBusSpeed_cmd(uint8_t *buf, ssize_t nread)
@@ -97,7 +97,7 @@ int I2CMaster_SetBusSpeed_cmd(uint8_t *buf, ssize_t nread)
     data->err_no = errno;
 
     // Log_Debug("%s\n", __func__);
-    return data->header.respond ? nread : -1;
+    return nread;
 }
 
 int I2CMaster_SetTimeout_cmd(uint8_t *buf, ssize_t nread)
@@ -107,7 +107,7 @@ int I2CMaster_SetTimeout_cmd(uint8_t *buf, ssize_t nread)
     data->returns = I2CMaster_SetTimeout(data->fd, data->timeoutInMs);
     data->err_no = errno;
 
-    return data->header.respond ? nread : -1;
+    return nread;
 }
 
 int I2CMaster_Write_cmd(uint8_t *buf, ssize_t nread)
@@ -134,7 +134,7 @@ int I2CMaster_WriteThenRead_cmd(uint8_t *buf, ssize_t nread)
                   sizeof(((I2CMaster_WriteThenRead_t *)0)->data_block.data) +
                   data->lenReadData);
 
-    return data->header.respond ? nread : -1;
+    return nread;
 }
 
 int I2CMaster_Read_cmd(uint8_t *buf, ssize_t nread)
@@ -148,7 +148,7 @@ int I2CMaster_Read_cmd(uint8_t *buf, ssize_t nread)
                   sizeof(((I2CMaster_Read_t *)0)->data_block.data) +
                   data->data_block.length);
 
-    return data->header.respond ? nread : -1;
+    return nread;
 }
 
 int I2CMaster_SetDefaultTargetAddress_cmd(uint8_t *buf, ssize_t nread)
@@ -158,7 +158,7 @@ int I2CMaster_SetDefaultTargetAddress_cmd(uint8_t *buf, ssize_t nread)
     data->returns = I2CMaster_SetDefaultTargetAddress(data->fd, data->address);
     data->err_no = errno;
 
-    return data->header.respond ? nread : -1;
+    return nread;
 }
 
 int PWM_Open_cmd(uint8_t *buf, ssize_t nread)
@@ -170,7 +170,7 @@ int PWM_Open_cmd(uint8_t *buf, ssize_t nread)
 
     ledger_add_file_descriptor(data->returns);
 
-    return data->header.respond ? nread : -1;
+    return nread;
 }
 
 int PWM_Apply_cmd(uint8_t *buf, ssize_t nread)
@@ -198,7 +198,7 @@ int ADC_Open_cmd(uint8_t *buf, ssize_t nread)
 
     ledger_add_file_descriptor(data->returns);
 
-    return data->header.respond ? nread : -1;
+    return nread;
 }
 
 int ADC_GetSampleBitCount_cmd(uint8_t *buf, ssize_t nread)
@@ -208,7 +208,7 @@ int ADC_GetSampleBitCount_cmd(uint8_t *buf, ssize_t nread)
     data->returns = ADC_GetSampleBitCount(data->fd, data->channel);
     data->err_no = errno;
 
-    return data->header.respond ? nread : -1;
+    return nread;
 }
 
 int ADC_SetReferenceVoltage_cmd(uint8_t *buf, ssize_t nread)
@@ -218,7 +218,7 @@ int ADC_SetReferenceVoltage_cmd(uint8_t *buf, ssize_t nread)
     data->returns = ADC_SetReferenceVoltage(data->fd, data->channel, data->referenceVoltage);
     data->err_no = errno;
 
-    return data->header.respond ? nread : -1;
+    return nread;
 }
 
 int ADC_Poll_cmd(uint8_t *buf, ssize_t nread)
@@ -231,7 +231,7 @@ int ADC_Poll_cmd(uint8_t *buf, ssize_t nread)
     data->outSampleValue = outSampleValue;
     data->err_no = errno;
 
-    return data->header.respond ? nread : -1;
+    return nread;
 }
 
 int SPIMaster_Open_cmd(uint8_t *buf, ssize_t nread)
@@ -246,7 +246,7 @@ int SPIMaster_Open_cmd(uint8_t *buf, ssize_t nread)
     data->err_no = errno;
     ledger_add_file_descriptor(data->returns);
 
-    return data->header.respond ? nread : -1;
+    return nread;
 }
 
 int SPIMaster_InitConfig_cmd(uint8_t *buf, ssize_t nread)
@@ -260,7 +260,7 @@ int SPIMaster_InitConfig_cmd(uint8_t *buf, ssize_t nread)
     data->csPolarity = config.csPolarity;
     data->z__magicAndVersion = config.z__magicAndVersion;
 
-    return data->header.respond ? nread : -1;
+    return nread;
 }
 
 int SPIMaster_SetBusSpeed_cmd(uint8_t *buf, ssize_t nread)
@@ -270,7 +270,7 @@ int SPIMaster_SetBusSpeed_cmd(uint8_t *buf, ssize_t nread)
     data->returns = SPIMaster_SetBusSpeed(data->fd, data->speedInHz);
     data->err_no = errno;
 
-    return data->header.respond ? nread : -1;
+    return nread;
 }
 
 int SPIMaster_SetMode_cmd(uint8_t *buf, ssize_t nread)
@@ -280,7 +280,7 @@ int SPIMaster_SetMode_cmd(uint8_t *buf, ssize_t nread)
     data->returns = SPIMaster_SetMode(data->fd, data->mode);
     data->err_no = errno;
 
-    return data->header.respond ? nread : -1;
+    return nread;
 }
 
 int SPIMaster_SetBitOrder_cmd(uint8_t *buf, ssize_t nread)
@@ -290,7 +290,7 @@ int SPIMaster_SetBitOrder_cmd(uint8_t *buf, ssize_t nread)
     data->returns = SPIMaster_SetBitOrder(data->fd, data->order);
     data->err_no = errno;
 
-    return data->header.respond ? nread : -1;
+    return nread;
 }
 
 int SPIMaster_WriteThenRead_cmd(uint8_t *buf, ssize_t nread)
@@ -314,23 +314,8 @@ int SPIMaster_WriteThenRead_cmd(uint8_t *buf, ssize_t nread)
                   sizeof(((SPIMaster_WriteThenRead_t *)0)->data_block.data) +
                   data->lenReadData);
 
-    return data->header.respond ? nread : -1;
+    return nread;
 }
-
-// int SPIMaster_InitTransfers_cmd(uint8_t *buf, ssize_t nread)
-// {
-//     SPIMaster_InitTransfers_t *data = (SPIMaster_InitTransfers_t *)buf;
-
-//     SPIMaster_Transfer transfer;
-//     transfer.z__magicAndVersion = data->z__magicAndVersion;
-
-//     data->returns = SPIMaster_InitTransfers(&transfer, data->transferCount);
-//     data->err_no = errno;
-
-//     data->z__magicAndVersion = transfer.z__magicAndVersion;
-
-//     return data->header.respond ? nread : -1;
-// }
 
 int SPIMaster_TransferSequential_cmd(uint8_t *buf, ssize_t nread)
 {
@@ -387,6 +372,7 @@ int SPIMaster_TransferSequential_cmd(uint8_t *buf, ssize_t nread)
             transfers[i].writeData = data_ptr;
             data_ptr += transfers[i].length;
         }
+
         // just return the core control block length minus the data block length
         nread = (int)(sizeof(SPIMaster_TransferSequential_t) - sizeof(((SPIMaster_TransferSequential_t *)0)->data_block));
     }
