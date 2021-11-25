@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <sys/types.h>
 
 typedef enum __attribute__((packed))
 {
@@ -33,7 +34,13 @@ typedef enum __attribute__((packed))
     ADC_Open_c,
     ADC_GetSampleBitCount_c,
     ADC_SetReferenceVoltage_c,
-    ADC_Poll_c
+    ADC_Poll_c,
+
+    Storage_OpenMutableFile_c,
+    Storage_DeleteMutableFile_c,
+    Storage_Write_c,
+    Storage_Read_c,
+    Storage_Lseek_c
 } SOCKET_CMD;
 
 typedef struct __attribute__((packed))
@@ -52,7 +59,6 @@ typedef struct __attribute__((packed))
 // Note the data block sent is variable length but not greater that 4096 and must be the last field in control block
 typedef struct __attribute__((packed))
 {
-    uint16_t length;
     uint8_t data[4096];
 } DATA_BLOCK;
 
@@ -123,6 +129,7 @@ typedef struct __attribute__((packed))
     CTX_HEADER header;
     int fd;
     unsigned char address;
+    int length;
     int returns;
     int err_no;
     DATA_BLOCK data_block; // Must be the last element in the struct
@@ -291,7 +298,53 @@ typedef struct __attribute__((packed))
     CTX_HEADER header;
     int fd;
     uint32_t transferCount;
+    int length;
     int returns;
     int err_no;
     DATA_BLOCK data_block; // Must be the last element in the struct
 } SPIMaster_TransferSequential_t;
+
+typedef struct __attribute__((packed))
+{
+    CTX_HEADER header;
+    int returns;
+    int err_no;
+} Storage_OpenMutableFile_t;
+
+typedef struct __attribute__((packed))
+{
+    CTX_HEADER header;
+    int returns;
+    int err_no;
+} Storage_DeleteMutableFile_t;
+
+typedef struct __attribute__((packed))
+{
+    CTX_HEADER header;
+    int fd;
+    int length;
+    int returns;
+    int err_no;
+    DATA_BLOCK data_block; // Must be the last element in the struct
+} Storage_Write_t;
+
+typedef struct __attribute__((packed))
+{
+    CTX_HEADER header;
+    int fd;
+    int length;
+    int returns;
+    int err_no;
+    DATA_BLOCK data_block; // Must be the last element in the struct
+} Storage_Read_t;
+
+
+typedef struct __attribute__((packed))
+{
+    CTX_HEADER header;
+    int fd;
+    off_t offset;
+    int whence;
+    int returns;
+    int err_no;
+} Storage_Lseek_t;

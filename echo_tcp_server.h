@@ -40,7 +40,7 @@ typedef struct {
     /// <summary>Number of characters received from client.</summary>
     size_t inLineSize;
     /// <summary>Data received from client.</summary>
-    char input[1024];
+    char input[5 * 1024];
     /// <summary>Payload to write to client.</summary>
     uint8_t *txPayload;
     /// <summary>Number of bytes to write to client.</summary>

@@ -12,7 +12,8 @@
     "Adc":["ADC-CONTROLLER-0"],
     "AllowedTcpServerPorts": [ 8888 ],
     "NetworkConfig": true,
-    "PowerControls":["SetPowerProfile"]
+    "PowerControls":["SetPowerProfile"],
+    "MutableStorage": { "SizeKB": 64 }
   },
   "ApplicationType": "Default"
 }

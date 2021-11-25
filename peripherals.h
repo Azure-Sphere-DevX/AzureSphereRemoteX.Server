@@ -4,13 +4,14 @@
 #include <stdbool.h>
 
 #include "contract.h"
+#include <applibs/adc.h>
 #include <applibs/gpio.h>
 #include <applibs/i2c.h>
-#include <applibs/spi.h>
-#include <applibs/pwm.h>
-#include <applibs/adc.h>
-#include <errno.h>
 #include <applibs/log.h>
+#include <applibs/pwm.h>
+#include <applibs/spi.h>
+#include <applibs/storage.h>
+#include <errno.h>
 #include <unistd.h>
 
 
@@ -24,6 +25,8 @@
     }
 
 #define ADD_CMD(command) command##_cmd
+#define CORE_BLOCK_SIZE(name) (int)(sizeof(name##_t) - sizeof(((name##_t *)0)->data_block))
+#define VARIABLE_BLOCK_SIZE(name, length) (int)(sizeof(name##_t) - sizeof(((name##_t *)0)->data_block.data) + length)
 
 #define NELEMS(x) (sizeof(x) / sizeof((x)[0]))
 
@@ -62,3 +65,9 @@ int ADC_Open_cmd(uint8_t *buf, ssize_t nread);
 int ADC_GetSampleBitCount_cmd(uint8_t *buf, ssize_t nread);
 int ADC_SetReferenceVoltage_cmd(uint8_t *buf, ssize_t nread);
 int ADC_Poll_cmd(uint8_t *buf, ssize_t nread);
+
+int Storage_OpenMutableFile_cmd(uint8_t *buf, ssize_t nread);
+int Storage_DeleteMutableFile_cmd(uint8_t *buf, ssize_t nread);
+int Storage_Write_cmd(uint8_t *buf, ssize_t nread);
+int Storage_Read_cmd(uint8_t *buf, ssize_t nread);
+int Storage_Lseek_cmd(uint8_t *buf, ssize_t nread);
