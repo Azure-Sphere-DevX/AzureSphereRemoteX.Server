@@ -95,7 +95,7 @@ BEGIN_CMD(I2CMaster_Write, data, nread)
     data->returns = I2CMaster_Write(data->fd, data->address, (const uint8_t *)data->data_block.data, (size_t)data->length);
     data->err_no = errno;
 }
-END_CMD(I2CMaster_SetTimeout)
+END_CMD(I2CMaster_Write)
 
 BEGIN_CMD(I2CMaster_WriteThenRead, data, nread)
 {
@@ -161,7 +161,7 @@ BEGIN_CMD(ADC_SetReferenceVoltage, data, nread)
     data->returns = ADC_SetReferenceVoltage(data->fd, data->channel, data->referenceVoltage);
     data->err_no = errno;
 }
-END_CMD(ADC_GetSampleBitCount)
+END_CMD(ADC_SetReferenceVoltage)
 
 BEGIN_CMD(ADC_Poll, data, nread)
 {
