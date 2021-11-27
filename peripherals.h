@@ -14,14 +14,13 @@
 #include <errno.h>
 #include <unistd.h>
 
-
-#define BEGIN_CMD(command, data, length)                   \
+#define BEGIN_CMD(command, data, length)            \
     int command##_cmd(uint8_t *buf, ssize_t length) \
-    {                                              \
+    {                                               \
         command##_t *data = (command##_t *)buf;
 
-#define END_CMD(command, returns) \
-    return returns;               \
+#define END_CMD(command) \
+    return 0;            \
     }
 
 #define ADD_CMD(command) command##_cmd

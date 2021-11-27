@@ -10,6 +10,7 @@
 #include "exitcode_privnetserv.h"
 #include "peripherals.h"
 #include <errno.h>
+#include <assert.h>
 
 /// <summary>Reason why the TCP server stopped.</summary>
 typedef enum {
@@ -45,7 +46,7 @@ typedef struct {
     uint8_t *txPayload;
     /// <summary>Number of bytes to write to client.</summary>
     size_t txPayloadSize;
-    /// <summary>Number of characters from paylod which have been written to client so
+    /// <summary>Number of characters from payload which have been written to client so
     /// far.</summary>
     size_t txBytesSent;
     /// <summary>

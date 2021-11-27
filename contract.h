@@ -46,6 +46,7 @@ typedef enum __attribute__((packed))
 typedef struct __attribute__((packed))
 {
     uint16_t block_length;
+    uint16_t response_length;
     SOCKET_CMD cmd;
     bool respond;
 } CTX_HEADER;
@@ -337,7 +338,6 @@ typedef struct __attribute__((packed))
     int err_no;
     DATA_BLOCK data_block; // Must be the last element in the struct
 } Storage_Read_t;
-
 
 typedef struct __attribute__((packed))
 {

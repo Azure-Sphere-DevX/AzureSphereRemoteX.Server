@@ -3,7 +3,7 @@
 
 cmake_minimum_required(VERSION 3.10)
 
-project(AzureSphereRemote C)
+project(AzureSphereRemoteX_Server C)
 
 if (EXISTS "${CMAKE_SOURCE_DIR}/tools/cmake/azsphere_config.cmake")
     include(tools/cmake/azsphere_config.cmake)

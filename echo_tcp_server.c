@@ -222,17 +222,16 @@ void process_command(EchoServer_ServerState *serverState, const uint8_t *buf, ss
 {
     CTX_HEADER *header = (CTX_HEADER *)buf;
 
-    int reponse_size = cmd_functions[header->cmd]((uint8_t *)buf, nread);
+    cmd_functions[header->cmd]((uint8_t *)buf, nread);
 
-    // if response is less than zero don't write response back to client
-    if (reponse_size < 0)
+    if (!header->respond)
     {
         LaunchRead(serverState);
     }
     else
     {
-        memcpy(serverState->input, buf, (size_t)reponse_size);
-        serverState->inLineSize = (size_t)reponse_size;
+        memcpy(serverState->input, buf, (size_t)header->response_length);
+        serverState->inLineSize = (size_t)header->response_length;
         LaunchWrite(serverState);
     }
 }

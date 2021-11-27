@@ -39,7 +39,7 @@ BEGIN_CMD(GPIO_OpenAsOutput, data, nread)
 
     ledger_add_file_descriptor(data->returns);
 }
-END_CMD(GPIO_OpenAsOutput, nread)
+END_CMD(GPIO_OpenAsOutput)
 
 BEGIN_CMD(GPIO_OpenAsInput, data, nread)
 {
@@ -48,14 +48,14 @@ BEGIN_CMD(GPIO_OpenAsInput, data, nread)
 
     ledger_add_file_descriptor(data->returns);
 }
-END_CMD(GPIO_OpenAsInput, nread)
+END_CMD(GPIO_OpenAsInputread)
 
 BEGIN_CMD(GPIO_SetValue, data, nread)
 {
     data->returns = GPIO_SetValue(data->gpioFd, data->value);
     data->err_no = errno;
 }
-END_CMD(GPIO_SetValue, data->header.respond ? nread : -1)
+END_CMD(GPIO_SetValue)
 
 BEGIN_CMD(GPIO_GetValue, data, nread)
 {
@@ -65,7 +65,7 @@ BEGIN_CMD(GPIO_GetValue, data, nread)
     data->outValue = outValue;
     data->err_no = errno;
 }
-END_CMD(GPIO_GetValue, nread)
+END_CMD(GPIO_GetValue)
 
 BEGIN_CMD(I2CMaster_Open, data, nread)
 {
@@ -74,55 +74,49 @@ BEGIN_CMD(I2CMaster_Open, data, nread)
 
     ledger_add_file_descriptor(data->returns);
 }
-END_CMD(I2CMaster_Open, nread)
+END_CMD(I2CMaster_Open)
 
 BEGIN_CMD(I2CMaster_SetBusSpeed, data, nread)
 {
     data->returns = I2CMaster_SetBusSpeed(data->fd, data->speedInHz);
     data->err_no = errno;
 }
-END_CMD(I2CMaster_SetBusSpeed, nread)
+END_CMD(I2CMaster_SetBusSpeed)
 
 BEGIN_CMD(I2CMaster_SetTimeout, data, nread)
 {
     data->returns = I2CMaster_SetTimeout(data->fd, data->timeoutInMs);
     data->err_no = errno;
 }
-END_CMD(I2CMaster_SetTimeout, nread)
+END_CMD(I2CMaster_SetTimeout)
 
 BEGIN_CMD(I2CMaster_Write, data, nread)
 {
     data->returns = I2CMaster_Write(data->fd, data->address, (const uint8_t *)data->data_block.data, (size_t)data->length);
     data->err_no = errno;
-
-    nread = CORE_BLOCK_SIZE(I2CMaster_Write);
 }
-END_CMD(I2CMaster_SetTimeout, data->header.respond ? nread : -1)
+END_CMD(I2CMaster_SetTimeout)
 
 BEGIN_CMD(I2CMaster_WriteThenRead, data, nread)
 {
     data->returns = I2CMaster_WriteThenRead(data->fd, data->address, (const uint8_t *)data->data_block.data, data->lenWriteData, (uint8_t *)data->data_block.data, data->lenReadData);
     data->err_no = errno;
-
-    nread = VARIABLE_BLOCK_SIZE(I2CMaster_WriteThenRead, data->lenReadData);
 }
-END_CMD(I2CMaster_WriteThenRead, nread)
+END_CMD(I2CMaster_WriteThenRead)
 
 BEGIN_CMD(I2CMaster_Read, data, nread)
 {
     data->returns = I2CMaster_Read(data->fd, data->address, data->data_block.data, data->maxLength);
     data->err_no = errno;
-
-    nread = VARIABLE_BLOCK_SIZE(I2CMaster_Read, data->maxLength);
 }
-END_CMD(I2CMaster_Read, nread)
+END_CMD(I2CMaster_Read)
 
 BEGIN_CMD(I2CMaster_SetDefaultTargetAddress, data, nread)
 {
     data->returns = I2CMaster_SetDefaultTargetAddress(data->fd, data->address);
     data->err_no = errno;
 }
-END_CMD(I2CMaster_SetDefaultTargetAddress, nread)
+END_CMD(I2CMaster_SetDefaultTargetAddress)
 
 BEGIN_CMD(PWM_Open, data, nread)
 {
@@ -131,7 +125,7 @@ BEGIN_CMD(PWM_Open, data, nread)
 
     ledger_add_file_descriptor(data->returns);
 }
-END_CMD(PWM_Open, nread)
+END_CMD(PWM_Open)
 
 BEGIN_CMD(PWM_Apply, data, nread)
 {
@@ -144,7 +138,7 @@ BEGIN_CMD(PWM_Apply, data, nread)
     data->returns = PWM_Apply(data->pwmFd, data->pwmChannel, &newState);
     data->err_no = errno;
 }
-END_CMD(PWM_Apply, data->header.respond ? nread : -1)
+END_CMD(PWM_Apply)
 
 BEGIN_CMD(ADC_Open, data, nread)
 {
@@ -153,21 +147,21 @@ BEGIN_CMD(ADC_Open, data, nread)
 
     ledger_add_file_descriptor(data->returns);
 }
-END_CMD(ADC_Open, nread)
+END_CMD(ADC_Open)
 
 BEGIN_CMD(ADC_GetSampleBitCount, data, nread)
 {
     data->returns = ADC_GetSampleBitCount(data->fd, data->channel);
     data->err_no = errno;
 }
-END_CMD(ADC_GetSampleBitCount, nread)
+END_CMD(ADC_GetSampleBitCount)
 
 BEGIN_CMD(ADC_SetReferenceVoltage, data, nread)
 {
     data->returns = ADC_SetReferenceVoltage(data->fd, data->channel, data->referenceVoltage);
     data->err_no = errno;
 }
-END_CMD(ADC_GetSampleBitCount, nread)
+END_CMD(ADC_GetSampleBitCount)
 
 BEGIN_CMD(ADC_Poll, data, nread)
 {
@@ -177,7 +171,7 @@ BEGIN_CMD(ADC_Poll, data, nread)
     data->outSampleValue = outSampleValue;
     data->err_no = errno;
 }
-END_CMD(ADC_Poll, nread)
+END_CMD(ADC_Poll)
 
 BEGIN_CMD(SPIMaster_Open, data, nread)
 {
@@ -189,7 +183,7 @@ BEGIN_CMD(SPIMaster_Open, data, nread)
     data->err_no = errno;
     ledger_add_file_descriptor(data->returns);
 }
-END_CMD(SPIMaster_Open, nread)
+END_CMD(SPIMaster_Open)
 
 BEGIN_CMD(SPIMaster_InitConfig, data, nread)
 {
@@ -201,28 +195,28 @@ BEGIN_CMD(SPIMaster_InitConfig, data, nread)
     data->csPolarity = config.csPolarity;
     data->z__magicAndVersion = config.z__magicAndVersion;
 }
-END_CMD(SPIMaster_InitConfig, nread)
+END_CMD(SPIMaster_InitConfig)
 
 BEGIN_CMD(SPIMaster_SetBusSpeed, data, nread)
 {
     data->returns = SPIMaster_SetBusSpeed(data->fd, data->speedInHz);
     data->err_no = errno;
 }
-END_CMD(SPIMaster_SetBusSpeed, nread)
+END_CMD(SPIMaster_SetBusSpeed)
 
 BEGIN_CMD(SPIMaster_SetMode, data, nread)
 {
     data->returns = SPIMaster_SetMode(data->fd, data->mode);
     data->err_no = errno;
 }
-END_CMD(SPIMaster_SetMode, nread)
+END_CMD(SPIMaster_SetMode)
 
 BEGIN_CMD(SPIMaster_SetBitOrder, data, nread)
 {
     data->returns = SPIMaster_SetBitOrder(data->fd, data->order);
     data->err_no = errno;
 }
-END_CMD(SPIMaster_SetBitOrder, nread)
+END_CMD(SPIMaster_SetBitOrder)
 
 BEGIN_CMD(SPIMaster_WriteThenRead, data, nread)
 {
@@ -232,10 +226,8 @@ BEGIN_CMD(SPIMaster_WriteThenRead, data, nread)
                                             data->data_block.data,
                                             data->lenReadData);
     data->err_no = errno;
-
-    nread = VARIABLE_BLOCK_SIZE(SPIMaster_WriteThenRead, data->lenReadData);
 }
-END_CMD(SPIMaster_WriteThenRead, nread)
+END_CMD(SPIMaster_WriteThenRead)
 
 BEGIN_CMD(SPIMaster_TransferSequential, data, nread)
 {
@@ -269,16 +261,12 @@ BEGIN_CMD(SPIMaster_TransferSequential, data, nread)
     if (read_transfer)
     {
         data_ptr = data->data_block.data;
-        data->length = 0;
 
         for (size_t i = 0; i < data->transferCount; i++)
         {
             transfers[i].readData = data_ptr;
             data_ptr += transfers[i].length;
-            data->length = data->length + (int)transfers[i].length;
         }
-
-        nread = VARIABLE_BLOCK_SIZE(SPIMaster_TransferSequential, (size_t)data->length);
     }
 
     if (write_transfer)
@@ -288,14 +276,12 @@ BEGIN_CMD(SPIMaster_TransferSequential, data, nread)
             transfers[i].writeData = data_ptr;
             data_ptr += transfers[i].length;
         }
-
-        nread = CORE_BLOCK_SIZE(SPIMaster_TransferSequential); // (int)(sizeof(SPIMaster_TransferSequential_t) - sizeof(((SPIMaster_TransferSequential_t *)0)->data_block));
     }
 
     data->returns = SPIMaster_TransferSequential(data->fd, transfers, data->transferCount);
     data->err_no = errno;
 }
-END_CMD(SPIMaster_TransferSequential, data->header.respond ? nread : -1)
+END_CMD(SPIMaster_TransferSequential)
 
 BEGIN_CMD(Storage_OpenMutableFile, data, nread)
 {
@@ -304,36 +290,32 @@ BEGIN_CMD(Storage_OpenMutableFile, data, nread)
 
     ledger_add_file_descriptor(data->returns);
 }
-END_CMD(Storage_OpenMutableFile, nread)
+END_CMD(Storage_OpenMutableFile)
 
 BEGIN_CMD(Storage_DeleteMutableFile, data, nread)
 {
     data->returns = Storage_DeleteMutableFile();
     data->err_no = errno;
 }
-END_CMD(Storage_DeleteMutableFile, nread)
+END_CMD(Storage_DeleteMutableFile)
 
 BEGIN_CMD(Storage_Write, data, nread)
 {
     data->returns = write(data->fd, data->data_block.data, (size_t)data->length);
     data->err_no = errno;
-
-    nread = CORE_BLOCK_SIZE(Storage_Write); // (int)(sizeof(Storage_Write_t)) - sizeof(((Storage_Write_t *)0)->data_block);
 }
-END_CMD(Storage_Write, nread)
+END_CMD(Storage_Write)
 
 BEGIN_CMD(Storage_Read, data, nread)
 {
     data->returns = read(data->fd, data->data_block.data, (size_t)data->length);
     data->err_no = errno;
-
-    nread = VARIABLE_BLOCK_SIZE(Storage_Read, (size_t)data->length);
 }
-END_CMD(Storage_Read, nread)
+END_CMD(Storage_Read)
 
 BEGIN_CMD(Storage_Lseek, data, nread)
 {
     data->returns = (int)lseek(data->fd, data->offset, data->whence);
     data->err_no = errno;
 }
-END_CMD(Storage_Read, nread)
+END_CMD(Storage_Read)
