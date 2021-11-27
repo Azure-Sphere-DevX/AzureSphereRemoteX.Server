@@ -19,8 +19,8 @@
     {                                               \
         command##_t *data = (command##_t *)buf;
 
-#define END_CMD(command) \
-    return 0;            \
+#define END_CMD \
+    return 0;   \
     }
 
 #define ADD_CMD(command) command##_cmd

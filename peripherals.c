@@ -39,7 +39,7 @@ BEGIN_CMD(GPIO_OpenAsOutput, data, nread)
 
     ledger_add_file_descriptor(data->returns);
 }
-END_CMD(GPIO_OpenAsOutput)
+END_CMD
 
 BEGIN_CMD(GPIO_OpenAsInput, data, nread)
 {
@@ -48,14 +48,14 @@ BEGIN_CMD(GPIO_OpenAsInput, data, nread)
 
     ledger_add_file_descriptor(data->returns);
 }
-END_CMD(GPIO_OpenAsInputread)
+END_CMD
 
 BEGIN_CMD(GPIO_SetValue, data, nread)
 {
     data->returns = GPIO_SetValue(data->gpioFd, data->value);
     data->err_no = errno;
 }
-END_CMD(GPIO_SetValue)
+END_CMD
 
 BEGIN_CMD(GPIO_GetValue, data, nread)
 {
@@ -65,7 +65,7 @@ BEGIN_CMD(GPIO_GetValue, data, nread)
     data->outValue = outValue;
     data->err_no = errno;
 }
-END_CMD(GPIO_GetValue)
+END_CMD
 
 BEGIN_CMD(I2CMaster_Open, data, nread)
 {
@@ -74,49 +74,49 @@ BEGIN_CMD(I2CMaster_Open, data, nread)
 
     ledger_add_file_descriptor(data->returns);
 }
-END_CMD(I2CMaster_Open)
+END_CMD
 
 BEGIN_CMD(I2CMaster_SetBusSpeed, data, nread)
 {
     data->returns = I2CMaster_SetBusSpeed(data->fd, data->speedInHz);
     data->err_no = errno;
 }
-END_CMD(I2CMaster_SetBusSpeed)
+END_CMD
 
 BEGIN_CMD(I2CMaster_SetTimeout, data, nread)
 {
     data->returns = I2CMaster_SetTimeout(data->fd, data->timeoutInMs);
     data->err_no = errno;
 }
-END_CMD(I2CMaster_SetTimeout)
+END_CMD
 
 BEGIN_CMD(I2CMaster_Write, data, nread)
 {
     data->returns = I2CMaster_Write(data->fd, data->address, (const uint8_t *)data->data_block.data, (size_t)data->length);
     data->err_no = errno;
 }
-END_CMD(I2CMaster_Write)
+END_CMD
 
 BEGIN_CMD(I2CMaster_WriteThenRead, data, nread)
 {
     data->returns = I2CMaster_WriteThenRead(data->fd, data->address, (const uint8_t *)data->data_block.data, data->lenWriteData, (uint8_t *)data->data_block.data, data->lenReadData);
     data->err_no = errno;
 }
-END_CMD(I2CMaster_WriteThenRead)
+END_CMD
 
 BEGIN_CMD(I2CMaster_Read, data, nread)
 {
     data->returns = I2CMaster_Read(data->fd, data->address, data->data_block.data, data->maxLength);
     data->err_no = errno;
 }
-END_CMD(I2CMaster_Read)
+END_CMD
 
 BEGIN_CMD(I2CMaster_SetDefaultTargetAddress, data, nread)
 {
     data->returns = I2CMaster_SetDefaultTargetAddress(data->fd, data->address);
     data->err_no = errno;
 }
-END_CMD(I2CMaster_SetDefaultTargetAddress)
+END_CMD
 
 BEGIN_CMD(PWM_Open, data, nread)
 {
@@ -125,7 +125,7 @@ BEGIN_CMD(PWM_Open, data, nread)
 
     ledger_add_file_descriptor(data->returns);
 }
-END_CMD(PWM_Open)
+END_CMD
 
 BEGIN_CMD(PWM_Apply, data, nread)
 {
@@ -138,7 +138,7 @@ BEGIN_CMD(PWM_Apply, data, nread)
     data->returns = PWM_Apply(data->pwmFd, data->pwmChannel, &newState);
     data->err_no = errno;
 }
-END_CMD(PWM_Apply)
+END_CMD
 
 BEGIN_CMD(ADC_Open, data, nread)
 {
@@ -147,21 +147,21 @@ BEGIN_CMD(ADC_Open, data, nread)
 
     ledger_add_file_descriptor(data->returns);
 }
-END_CMD(ADC_Open)
+END_CMD
 
 BEGIN_CMD(ADC_GetSampleBitCount, data, nread)
 {
     data->returns = ADC_GetSampleBitCount(data->fd, data->channel);
     data->err_no = errno;
 }
-END_CMD(ADC_GetSampleBitCount)
+END_CMD
 
 BEGIN_CMD(ADC_SetReferenceVoltage, data, nread)
 {
     data->returns = ADC_SetReferenceVoltage(data->fd, data->channel, data->referenceVoltage);
     data->err_no = errno;
 }
-END_CMD(ADC_SetReferenceVoltage)
+END_CMD
 
 BEGIN_CMD(ADC_Poll, data, nread)
 {
@@ -171,7 +171,7 @@ BEGIN_CMD(ADC_Poll, data, nread)
     data->outSampleValue = outSampleValue;
     data->err_no = errno;
 }
-END_CMD(ADC_Poll)
+END_CMD
 
 BEGIN_CMD(SPIMaster_Open, data, nread)
 {
@@ -183,7 +183,7 @@ BEGIN_CMD(SPIMaster_Open, data, nread)
     data->err_no = errno;
     ledger_add_file_descriptor(data->returns);
 }
-END_CMD(SPIMaster_Open)
+END_CMD
 
 BEGIN_CMD(SPIMaster_InitConfig, data, nread)
 {
@@ -195,28 +195,28 @@ BEGIN_CMD(SPIMaster_InitConfig, data, nread)
     data->csPolarity = config.csPolarity;
     data->z__magicAndVersion = config.z__magicAndVersion;
 }
-END_CMD(SPIMaster_InitConfig)
+END_CMD
 
 BEGIN_CMD(SPIMaster_SetBusSpeed, data, nread)
 {
     data->returns = SPIMaster_SetBusSpeed(data->fd, data->speedInHz);
     data->err_no = errno;
 }
-END_CMD(SPIMaster_SetBusSpeed)
+END_CMD
 
 BEGIN_CMD(SPIMaster_SetMode, data, nread)
 {
     data->returns = SPIMaster_SetMode(data->fd, data->mode);
     data->err_no = errno;
 }
-END_CMD(SPIMaster_SetMode)
+END_CMD
 
 BEGIN_CMD(SPIMaster_SetBitOrder, data, nread)
 {
     data->returns = SPIMaster_SetBitOrder(data->fd, data->order);
     data->err_no = errno;
 }
-END_CMD(SPIMaster_SetBitOrder)
+END_CMD
 
 BEGIN_CMD(SPIMaster_WriteThenRead, data, nread)
 {
@@ -227,7 +227,7 @@ BEGIN_CMD(SPIMaster_WriteThenRead, data, nread)
                                             data->lenReadData);
     data->err_no = errno;
 }
-END_CMD(SPIMaster_WriteThenRead)
+END_CMD
 
 BEGIN_CMD(SPIMaster_TransferSequential, data, nread)
 {
@@ -281,7 +281,7 @@ BEGIN_CMD(SPIMaster_TransferSequential, data, nread)
     data->returns = SPIMaster_TransferSequential(data->fd, transfers, data->transferCount);
     data->err_no = errno;
 }
-END_CMD(SPIMaster_TransferSequential)
+END_CMD
 
 BEGIN_CMD(Storage_OpenMutableFile, data, nread)
 {
@@ -290,32 +290,32 @@ BEGIN_CMD(Storage_OpenMutableFile, data, nread)
 
     ledger_add_file_descriptor(data->returns);
 }
-END_CMD(Storage_OpenMutableFile)
+END_CMD
 
 BEGIN_CMD(Storage_DeleteMutableFile, data, nread)
 {
     data->returns = Storage_DeleteMutableFile();
     data->err_no = errno;
 }
-END_CMD(Storage_DeleteMutableFile)
+END_CMD
 
 BEGIN_CMD(RemoteX_Write, data, nread)
 {
     data->returns = write(data->fd, data->data_block.data, (size_t)data->length);
     data->err_no = errno;
 }
-END_CMD(RemoteX_Write)
+END_CMD
 
 BEGIN_CMD(RemoteX_Read, data, nread)
 {
     data->returns = read(data->fd, data->data_block.data, (size_t)data->length);
     data->err_no = errno;
 }
-END_CMD(RemoteX_Read)
+END_CMD
 
 BEGIN_CMD(RemoteX_Lseek, data, nread)
 {
     data->returns = (int)lseek(data->fd, data->offset, data->whence);
     data->err_no = errno;
 }
-END_CMD(RemoteX_Lseek)
+END_CMD
