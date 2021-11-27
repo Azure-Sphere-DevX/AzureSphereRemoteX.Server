@@ -67,6 +67,7 @@ int ADC_Poll_cmd(uint8_t *buf, ssize_t nread);
 
 int Storage_OpenMutableFile_cmd(uint8_t *buf, ssize_t nread);
 int Storage_DeleteMutableFile_cmd(uint8_t *buf, ssize_t nread);
-int Storage_Write_cmd(uint8_t *buf, ssize_t nread);
-int Storage_Read_cmd(uint8_t *buf, ssize_t nread);
-int Storage_Lseek_cmd(uint8_t *buf, ssize_t nread);
+
+int RemoteX_Write_cmd(uint8_t *buf, ssize_t nread);
+int RemoteX_Read_cmd(uint8_t *buf, ssize_t nread);
+int RemoteX_Lseek_cmd(uint8_t *buf, ssize_t nread);

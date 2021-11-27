@@ -59,9 +59,9 @@ static int (*cmd_functions[])(uint8_t *buf, ssize_t nread) = {
 
     ADD_CMD(Storage_OpenMutableFile),
     ADD_CMD(Storage_DeleteMutableFile),
-    ADD_CMD(Storage_Write),
-    ADD_CMD(Storage_Read),
-    ADD_CMD(Storage_Lseek)};
+    ADD_CMD(RemoteX_Write),
+    ADD_CMD(RemoteX_Read),
+    ADD_CMD(RemoteX_Lseek)};
 
 EchoServer_ServerState *EchoServer_Start(EventLoop *eventLoopInstance, in_addr_t ipAddr,
                                          uint16_t port, int backlogSize,

@@ -38,9 +38,10 @@ typedef enum __attribute__((packed))
 
     Storage_OpenMutableFile_c,
     Storage_DeleteMutableFile_c,
-    Storage_Write_c,
-    Storage_Read_c,
-    Storage_Lseek_c
+    
+    RemoteX_Write_c,
+    RemoteX_Read_c,
+    RemoteX_Lseek_c
 } SOCKET_CMD;
 
 typedef struct __attribute__((packed))
@@ -327,7 +328,7 @@ typedef struct __attribute__((packed))
     int returns;
     int err_no;
     DATA_BLOCK data_block; // Must be the last element in the struct
-} Storage_Write_t;
+} RemoteX_Write_t;
 
 typedef struct __attribute__((packed))
 {
@@ -337,7 +338,7 @@ typedef struct __attribute__((packed))
     int returns;
     int err_no;
     DATA_BLOCK data_block; // Must be the last element in the struct
-} Storage_Read_t;
+} RemoteX_Read_t;
 
 typedef struct __attribute__((packed))
 {
@@ -347,4 +348,4 @@ typedef struct __attribute__((packed))
     int whence;
     int returns;
     int err_no;
-} Storage_Lseek_t;
+} RemoteX_Lseek_t;

@@ -299,23 +299,23 @@ BEGIN_CMD(Storage_DeleteMutableFile, data, nread)
 }
 END_CMD(Storage_DeleteMutableFile)
 
-BEGIN_CMD(Storage_Write, data, nread)
+BEGIN_CMD(RemoteX_Write, data, nread)
 {
     data->returns = write(data->fd, data->data_block.data, (size_t)data->length);
     data->err_no = errno;
 }
-END_CMD(Storage_Write)
+END_CMD(RemoteX_Write)
 
-BEGIN_CMD(Storage_Read, data, nread)
+BEGIN_CMD(RemoteX_Read, data, nread)
 {
     data->returns = read(data->fd, data->data_block.data, (size_t)data->length);
     data->err_no = errno;
 }
-END_CMD(Storage_Read)
+END_CMD(RemoteX_Read)
 
-BEGIN_CMD(Storage_Lseek, data, nread)
+BEGIN_CMD(RemoteX_Lseek, data, nread)
 {
     data->returns = (int)lseek(data->fd, data->offset, data->whence);
     data->err_no = errno;
 }
-END_CMD(Storage_Read)
+END_CMD(RemoteX_Lseek)
