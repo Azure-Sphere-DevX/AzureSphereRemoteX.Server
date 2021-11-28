@@ -59,6 +59,7 @@ static int (*cmd_functions[])(uint8_t *buf, ssize_t nread) = {
 
     ADD_CMD(Storage_OpenMutableFile),
     ADD_CMD(Storage_DeleteMutableFile),
+
     ADD_CMD(RemoteX_Write),
     ADD_CMD(RemoteX_Read),
     ADD_CMD(RemoteX_Lseek)};
@@ -222,7 +223,13 @@ void process_command(EchoServer_ServerState *serverState, const uint8_t *buf, ss
 {
     CTX_HEADER *header = (CTX_HEADER *)buf;
 
-    cmd_functions[header->cmd]((uint8_t *)buf, nread);
+    if (header->cmd < NELEMS(cmd_functions) && header->contract_version <= REMOTEX_CONTRACT_VERSION)
+    {
+        cmd_functions[header->cmd]((uint8_t *)buf, nread);
+    } else {
+        Log_Debug("Error: Request uses newer contract version. Rebuild RemoteX service with latest contact.\n");
+        header->contract_version = REMOTEX_CONTRACT_VERSION;
+    }
 
     if (!header->respond)
     {

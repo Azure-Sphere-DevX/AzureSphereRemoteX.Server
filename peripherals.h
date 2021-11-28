@@ -14,14 +14,18 @@
 #include <errno.h>
 #include <unistd.h>
 
-#define BEGIN_CMD(command, data, length)            \
+#define DEFINE_CMD(command, data, length)           \
     int command##_cmd(uint8_t *buf, ssize_t length) \
     {                                               \
         command##_t *data = (command##_t *)buf;
 
-#define END_CMD \
-    return 0;   \
+#define END_CMD           \
+    data->err_no = errno; \
+    return 0;             \
     }
+
+#define DECLARE_CMD(command) \
+    int command##_cmd(uint8_t *buf, ssize_t nread)
 
 #define ADD_CMD(command) command##_cmd
 #define CORE_BLOCK_SIZE(name) (int)(sizeof(name##_t) - sizeof(((name##_t *)0)->data_block))
@@ -35,39 +39,39 @@ int file_descriptor_ledger[LEDGE_SIZE];
 void ledger_initialize(void);
 void ledger_close(void);
 
-int GPIO_OpenAsOutput_cmd(uint8_t *buf, ssize_t nread);
-int GPIO_OpenAsInput_cmd(uint8_t *buf, ssize_t nread);
-int GPIO_SetValue_cmd(uint8_t *buf, ssize_t nread);
-int GPIO_GetValue_cmd(uint8_t *buf, ssize_t nread);
+DECLARE_CMD(GPIO_OpenAsOutput);
+DECLARE_CMD(GPIO_OpenAsInput);
+DECLARE_CMD(GPIO_SetValue);
+DECLARE_CMD(GPIO_GetValue);
 
-int I2CMaster_Open_cmd(uint8_t *buf, ssize_t nread);
-int I2CMaster_SetBusSpeed_cmd(uint8_t *buf, ssize_t nread);
-int I2CMaster_SetTimeout_cmd(uint8_t *buf, ssize_t nread);
-int I2CMaster_Write_cmd(uint8_t *buf, ssize_t nread);
-int I2CMaster_WriteThenRead_cmd(uint8_t *buf, ssize_t nread);
-int I2CMaster_Read_cmd(uint8_t *buf, ssize_t nread);
-int I2CMaster_SetDefaultTargetAddress_cmd(uint8_t *buf, ssize_t nread);
+DECLARE_CMD(I2CMaster_Open);
+DECLARE_CMD(I2CMaster_SetBusSpeed);
+DECLARE_CMD(I2CMaster_SetTimeout);
+DECLARE_CMD(I2CMaster_Write);
+DECLARE_CMD(I2CMaster_WriteThenRead);
+DECLARE_CMD(I2CMaster_Read);
+DECLARE_CMD(I2CMaster_SetDefaultTargetAddress);
 
-int SPIMaster_Open_cmd(uint8_t *buf, ssize_t nread);
-int SPIMaster_InitConfig_cmd(uint8_t *buf, ssize_t nread);
-int SPIMaster_SetBusSpeed_cmd(uint8_t *buf, ssize_t nread);
-int SPIMaster_SetMode_cmd(uint8_t *buf, ssize_t nread);
-int SPIMaster_SetBitOrder_cmd(uint8_t *buf, ssize_t nread);
-int SPIMaster_WriteThenRead_cmd(uint8_t *buf, ssize_t nread);
-int SPIMaster_InitTransfers_cmd(uint8_t *buf, ssize_t nread);
-int SPIMaster_TransferSequential_cmd(uint8_t *buf, ssize_t nread);
+DECLARE_CMD(SPIMaster_Open);
+DECLARE_CMD(SPIMaster_InitConfig);
+DECLARE_CMD(SPIMaster_SetBusSpeed);
+DECLARE_CMD(SPIMaster_SetMode);
+DECLARE_CMD(SPIMaster_SetBitOrder);
+DECLARE_CMD(SPIMaster_WriteThenRead);
+DECLARE_CMD(SPIMaster_InitTransfers);
+DECLARE_CMD(SPIMaster_TransferSequential);
 
-int PWM_Open_cmd(uint8_t *buf, ssize_t nread);
-int PWM_Apply_cmd(uint8_t *buf, ssize_t nread);
+DECLARE_CMD(PWM_Open);
+DECLARE_CMD(PWM_Apply);
 
-int ADC_Open_cmd(uint8_t *buf, ssize_t nread);
-int ADC_GetSampleBitCount_cmd(uint8_t *buf, ssize_t nread);
-int ADC_SetReferenceVoltage_cmd(uint8_t *buf, ssize_t nread);
-int ADC_Poll_cmd(uint8_t *buf, ssize_t nread);
+DECLARE_CMD(ADC_Open);
+DECLARE_CMD(ADC_GetSampleBitCount);
+DECLARE_CMD(ADC_SetReferenceVoltage);
+DECLARE_CMD(ADC_Poll);
 
-int Storage_OpenMutableFile_cmd(uint8_t *buf, ssize_t nread);
-int Storage_DeleteMutableFile_cmd(uint8_t *buf, ssize_t nread);
+DECLARE_CMD(Storage_OpenMutableFile);
+DECLARE_CMD(Storage_DeleteMutableFile);
 
-int RemoteX_Write_cmd(uint8_t *buf, ssize_t nread);
-int RemoteX_Read_cmd(uint8_t *buf, ssize_t nread);
-int RemoteX_Lseek_cmd(uint8_t *buf, ssize_t nread);
+DECLARE_CMD(RemoteX_Write);
+DECLARE_CMD(RemoteX_Read);
+DECLARE_CMD(RemoteX_Lseek);

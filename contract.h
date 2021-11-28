@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <sys/types.h>
 
+#define REMOTEX_CONTRACT_VERSION 3
+
 typedef enum __attribute__((packed))
 {
     GPIO_OpenAsOutput_c,
@@ -50,6 +52,7 @@ typedef struct __attribute__((packed))
     uint16_t response_length;
     SOCKET_CMD cmd;
     bool respond;
+    uint8_t contract_version;
 } CTX_HEADER;
 
 typedef struct __attribute__((packed))
