@@ -223,6 +223,7 @@ void process_command(EchoServer_ServerState *serverState, const uint8_t *buf, ss
 {
     CTX_HEADER *header = (CTX_HEADER *)buf;
 
+    // Validate incoming command and contract version
     if (header->cmd < NELEMS(cmd_functions) && header->contract_version <= REMOTEX_CONTRACT_VERSION)
     {
         cmd_functions[header->cmd]((uint8_t *)buf, nread);
