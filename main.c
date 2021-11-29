@@ -90,15 +90,15 @@ static void CheckStatusTimerEventHandler(EventLoopTimer *timer)
             return;
         }
 
-        dx_gpioOff(&gpio_startup_led);
-        dx_gpioClose(&gpio_startup_led);
+        dx_gpioOff(&gpio_status_led);
+        dx_gpioClose(&gpio_status_led);
     }
 }
 
 static ExitCode InitializeAndLaunchServers(void)
 {
-    dx_gpioOpen(&gpio_startup_led);
-    dx_gpioOn(&gpio_startup_led);
+    dx_gpioOpen(&gpio_status_led);
+    dx_gpioOn(&gpio_status_led);
     dx_timerSetStart(timer_bindings, NELEMS(timer_bindings));
     return ExitCode_Success;
 }

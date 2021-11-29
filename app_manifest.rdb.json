@@ -6,15 +6,22 @@
   "CmdArgs": [],
   "Capabilities": {
     "Gpio": [
-      "$STATUS_LED",
-      "$WLAN_STATUS_LED_YELLOW",
-      "$USER_LED_RED",
-      "$USER_LED_GREEN",
-      "$USER_LED_BLUE",
+      "$LED1_RED",
+      "$LED1_GREEN",
+      "$LED1_BLUE",
+      "$LED2_RED",
+      "$LED2_GREEN",
+      "$LED2_BLUE",
+      "$LED3_RED",
+      "$LED3_GREEN",
+      "$LED3_BLUE",
+      "$LED4_RED",
+      "$LED4_GREEN",
+      "$LED4_BLUE",
+      "$NETWORKING_LED_GREEN",
+      "$NETWORKING_LED_BLUE",
       "$BUTTON_A",
-      "$BUTTON_B",
-      "$PIN_16",
-      "$PIN_17"
+      "$BUTTON_B"
     ],
     "I2cMaster": [
       "$I2cMaster"
@@ -22,7 +29,9 @@
     "SpiMaster": [
       "$SpiMaster"
     ],
-    "Pwm": [],
+    "Pwm": [
+      "$Pwm"
+    ],
     "Adc": [
       "$Adc"
     ],

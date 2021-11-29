@@ -7,14 +7,7 @@
   "Capabilities": {
     "Gpio": [
       "$STATUS_LED",
-      "$WLAN_STATUS_LED_YELLOW",
-      "$USER_LED_RED",
-      "$USER_LED_GREEN",
-      "$USER_LED_BLUE",
-      "$BUTTON_A",
-      "$BUTTON_B",
-      "$PIN_16",
-      "$PIN_17"
+      "$PIN3_GPIO6"
     ],
     "I2cMaster": [
       "$I2cMaster"
@@ -22,7 +15,9 @@
     "SpiMaster": [
       "$SpiMaster"
     ],
-    "Pwm": [],
+    "Pwm": [
+      "$Pwm"
+    ],
     "Adc": [
       "$Adc"
     ],

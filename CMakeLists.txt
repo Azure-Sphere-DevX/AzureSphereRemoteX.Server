@@ -5,6 +5,8 @@ cmake_minimum_required(VERSION 3.10)
 
 project(AzureSphereRemoteX_Server C)
 
+include(azsphere_board.txt)
+
 if (EXISTS "${CMAKE_SOURCE_DIR}/tools/cmake/azsphere_config.cmake")
     include(tools/cmake/azsphere_config.cmake)
     auto_generate_azsphere_config()
@@ -24,6 +26,44 @@ target_link_libraries(${PROJECT_NAME} applibs gcc_s c)
 add_subdirectory("AzureSphereDevX" out)
 target_link_libraries (${PROJECT_NAME} azure_sphere_devx)
 target_include_directories(${PROJECT_NAME} PUBLIC Azure-Sphere-DevX/include )
+
+set(BOARD_COUNTER 0)
+
+if(AVNET)
+    MATH(EXPR BOARD_COUNTER "${BOARD_COUNTER}+1")
+    add_definitions( -DOEM_AVNET=TRUE )
+    azsphere_target_hardware_definition(${PROJECT_NAME} TARGET_DIRECTORY "HardwareDefinitions/avnet_mt3620_sk" TARGET_DEFINITION "azure_sphere_remotex.json")
+    message(STATUS "Azure Sphere board selected: AVNET REV 1")
+endif(AVNET)
+
+if(AVNET_REV_2)
+    MATH(EXPR BOARD_COUNTER "${BOARD_COUNTER}+1")
+    add_definitions( -DOEM_AVNET=TRUE )
+    azsphere_target_hardware_definition(${PROJECT_NAME} TARGET_DIRECTORY "HardwareDefinitions/avnet_mt3620_sk_rev2" TARGET_DEFINITION "azure_sphere_remotex.json")
+    message(STATUS "Azure Sphere board selected: AVNET REV 2")
+endif(AVNET_REV_2)
+
+if (SEEED_STUDIO_RDB)
+    MATH(EXPR BOARD_COUNTER "${BOARD_COUNTER}+1")
+    add_definitions( -DOEM_SEEED_STUDIO=TRUE )
+    azsphere_target_hardware_definition(${PROJECT_NAME} TARGET_DIRECTORY "HardwareDefinitions/mt3620_rdb" TARGET_DEFINITION "azure_sphere_remotex.json")
+    message(STATUS "Azure Sphere board selected: SEEED STUDIO RDB")
+endif()
+
+if (SEEED_STUDIO_MINI)
+    MATH(EXPR BOARD_COUNTER "${BOARD_COUNTER}+1")
+    add_definitions( -DOEM_SEEED_STUDIO_MINI=TRUE )    
+    azsphere_target_hardware_definition(${PROJECT_NAME} TARGET_DIRECTORY "HardwareDefinitions/seeed_mt3620_mdb" TARGET_DEFINITION "azure_sphere_remotex.json")
+    message(STATUS "Azure Sphere board selected: SEEED STUDIO MINI")
+endif(SEEED_STUDIO_MINI)
+
+if(BOARD_COUNTER EQUAL 0)
+    message(FATAL_ERROR "No Azure Sphere boards selected. Ensure one board set")
+endif()
+
+if(BOARD_COUNTER GREATER 1)
+    message(FATAL_ERROR "Multiple (${BOARD_COUNTER}) Azure Sphere boards selected. Ensure only one board set")
+endif()
 
 
 azsphere_target_add_image_package(${PROJECT_NAME})
