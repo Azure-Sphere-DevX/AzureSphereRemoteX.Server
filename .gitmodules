@@ -4,3 +4,6 @@
 [submodule "tools"]
 	path = tools
 	url = https://github.com/Azure-Sphere-DevX/AzureSphereDevX.Tools.git
+[submodule "HardwareDefinitions"]
+	path = HardwareDefinitions
+	url = https://github.com/Azure-Sphere-DevX/AzureSphereDevX.HardwareDefinitions.git
