@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 
-#define REMOTEX_CONTRACT_VERSION 3
+#define REMOTEX_CONTRACT_VERSION 4
 
 typedef enum __attribute__((packed))
 {
@@ -43,7 +43,8 @@ typedef enum __attribute__((packed))
     
     RemoteX_Write_c,
     RemoteX_Read_c,
-    RemoteX_Lseek_c
+    RemoteX_Lseek_c,
+    RemoteX_PlatformInformation_c
 } SOCKET_CMD;
 
 typedef struct __attribute__((packed))
@@ -352,3 +353,12 @@ typedef struct __attribute__((packed))
     int returns;
     int err_no;
 } RemoteX_Lseek_t;
+
+typedef struct __attribute__((packed))
+{
+    CTX_HEADER header;
+    int length;
+    int returns;
+    int err_no;
+    DATA_BLOCK data_block; // Must be the last element in the struct
+} RemoteX_PlatformInformation_t;

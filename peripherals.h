@@ -75,3 +75,4 @@ DECLARE_CMD(Storage_DeleteMutableFile);
 DECLARE_CMD(RemoteX_Write);
 DECLARE_CMD(RemoteX_Read);
 DECLARE_CMD(RemoteX_Lseek);
+DECLARE_CMD(RemoteX_PlatformInformation);

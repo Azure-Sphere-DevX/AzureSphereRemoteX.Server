@@ -284,3 +284,9 @@ DEFINE_CMD(RemoteX_Lseek, data, nread)
     data->returns = (int)lseek(data->fd, data->offset, data->whence);
 }
 END_CMD
+
+DEFINE_CMD(RemoteX_PlatformInformation, data, nread)
+{
+    data->returns = snprintf(data->data_block.data, (size_t)data->length, "Device platform: %s, Firmware version: %s", DEVICE_PLATFORM, FIRMWARE_VERSION);
+}
+END_CMD

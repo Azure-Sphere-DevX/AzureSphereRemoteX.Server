@@ -17,14 +17,16 @@
       "$PIN_17"
     ],
     "I2cMaster": [
-      "$I2cMaster"
+      "$I2C_MASTER"
     ],
     "SpiMaster": [
-      "$SpiMaster"
+      "$SPI_MASTER"
     ],
-    "Pwm": [],
+    "Pwm": [
+      "$PWM"
+    ],
     "Adc": [
-      "$Adc"
+      "$ADC"
     ],
     "AllowedTcpServerPorts": [
       8888

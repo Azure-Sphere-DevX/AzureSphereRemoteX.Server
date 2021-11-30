@@ -7,24 +7,23 @@
   "Capabilities": {
     "Gpio": [
       "$STATUS_LED",
-      "$WLAN_STATUS_LED_YELLOW",
       "$USER_LED_RED",
       "$USER_LED_GREEN",
       "$USER_LED_BLUE",
       "$BUTTON_A",
-      "$BUTTON_B",
-      "$PIN_16",
-      "$PIN_17"
+      "$BUTTON_B"
     ],
     "I2cMaster": [
-      "$I2cMaster"
+      "$I2C_MASTER"
     ],
     "SpiMaster": [
-      "$SpiMaster"
+      "$SPI_MASTER"
     ],
-    "Pwm": [],
+    // "Pwm": [
+    //   "$PWM"
+    // ],
     "Adc": [
-      "$Adc"
+      "$ADC"
     ],
     "AllowedTcpServerPorts": [
       8888
