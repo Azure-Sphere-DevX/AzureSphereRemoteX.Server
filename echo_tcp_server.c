@@ -63,6 +63,7 @@ static int (*cmd_functions[])(uint8_t *buf, ssize_t nread) = {
     ADD_CMD(RemoteX_Write),
     ADD_CMD(RemoteX_Read),
     ADD_CMD(RemoteX_Lseek),
+    ADD_CMD(RemoteX_Close),
     ADD_CMD(RemoteX_PlatformInformation)};
 
 EchoServer_ServerState *EchoServer_Start(EventLoop *eventLoopInstance, in_addr_t ipAddr,
