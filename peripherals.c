@@ -10,11 +10,33 @@ void ledger_initialize(void)
 
 void ledger_add_file_descriptor(int fd)
 {
+    if (fd == -1)
+    {
+        return;
+    }
+
     for (size_t i = 0; i < LEDGE_SIZE; i++)
     {
         if (file_descriptor_ledger[i] == -1)
         {
             file_descriptor_ledger[i] = fd;
+            break;
+        }
+    }
+}
+
+void ledger_remove_file_descriptor(int fd)
+{
+    if (fd == -1)
+    {
+        return;
+    }
+
+    for (size_t i = 0; i < LEDGE_SIZE; i++)
+    {
+        if (file_descriptor_ledger[i] == fd)
+        {
+            file_descriptor_ledger[i] = -1;
             break;
         }
     }
@@ -288,11 +310,30 @@ END_CMD
 DEFINE_CMD(RemoteX_Close, data, nread)
 {
     data->returns = close(data->fd);
+    ledger_remove_file_descriptor(data->fd);
 }
 END_CMD
 
 DEFINE_CMD(RemoteX_PlatformInformation, data, nread)
 {
     data->returns = snprintf(data->data_block.data, (size_t)data->length, "Device platform: %s, Firmware version: %s", DEVICE_PLATFORM, FIRMWARE_VERSION);
+}
+END_CMD
+
+DEFINE_CMD(UART_InitConfig, data, nread)
+{
+    uint8_t *data_ptr = data->data_block.data;
+    UART_Config *uartConfig = (UART_Config *)data_ptr;
+    UART_InitConfig(uartConfig);
+}
+END_CMD
+
+DEFINE_CMD(UART_Open, data, nread)
+{
+    uint8_t *data_ptr = data->data_block.data;
+    UART_Config *uartConfig = (UART_Config *)data_ptr;
+
+    data->returns = UART_Open(data->uartId, uartConfig);
+    ledger_add_file_descriptor(data->returns);
 }
 END_CMD

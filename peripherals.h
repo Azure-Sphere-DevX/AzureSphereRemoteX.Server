@@ -11,6 +11,7 @@
 #include <applibs/pwm.h>
 #include <applibs/spi.h>
 #include <applibs/storage.h>
+#include <applibs/uart.h>
 #include <errno.h>
 #include <unistd.h>
 
@@ -77,3 +78,6 @@ DECLARE_CMD(RemoteX_Read);
 DECLARE_CMD(RemoteX_Lseek);
 DECLARE_CMD(RemoteX_Close);
 DECLARE_CMD(RemoteX_PlatformInformation);
+
+DECLARE_CMD(UART_InitConfig);
+DECLARE_CMD(UART_Open);

@@ -28,9 +28,6 @@
     "Adc": [
       "$ADC"
     ],
-    "Uart":[
-      "$UART"
-    ],
     "AllowedTcpServerPorts": [
       8888
     ],

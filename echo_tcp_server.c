@@ -64,7 +64,12 @@ static int (*cmd_functions[])(uint8_t *buf, ssize_t nread) = {
     ADD_CMD(RemoteX_Read),
     ADD_CMD(RemoteX_Lseek),
     ADD_CMD(RemoteX_Close),
-    ADD_CMD(RemoteX_PlatformInformation)};
+    ADD_CMD(RemoteX_PlatformInformation),
+
+    ADD_CMD(UART_InitConfig),
+    ADD_CMD(UART_Open)
+
+};
 
 EchoServer_ServerState *EchoServer_Start(EventLoop *eventLoopInstance, in_addr_t ipAddr,
                                          uint16_t port, int backlogSize,
@@ -229,7 +234,9 @@ void process_command(EchoServer_ServerState *serverState, const uint8_t *buf, ss
     if (header->cmd < NELEMS(cmd_functions) && header->contract_version <= REMOTEX_CONTRACT_VERSION)
     {
         cmd_functions[header->cmd]((uint8_t *)buf, nread);
-    } else {
+    }
+    else
+    {
         Log_Debug("Error: Request uses newer contract version. Rebuild RemoteX service with latest contact.\n");
         header->contract_version = REMOTEX_CONTRACT_VERSION;
     }
