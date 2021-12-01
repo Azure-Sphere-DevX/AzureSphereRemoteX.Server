@@ -56,21 +56,21 @@ void ledger_close(void)
 
 DEFINE_CMD(GPIO_OpenAsOutput, data, nread)
 {
-    data->returns = GPIO_OpenAsOutput(data->gpioId, data->outputMode, data->initialValue);
-    ledger_add_file_descriptor(data->returns);
+    data->header.returns = GPIO_OpenAsOutput(data->gpioId, data->outputMode, data->initialValue);
+    ledger_add_file_descriptor(data->header.returns);
 }
 END_CMD
 
 DEFINE_CMD(GPIO_OpenAsInput, data, nread)
 {
-    data->returns = GPIO_OpenAsInput(data->gpioId);
-    ledger_add_file_descriptor(data->returns);
+    data->header.returns = GPIO_OpenAsInput(data->gpioId);
+    ledger_add_file_descriptor(data->header.returns);
 }
 END_CMD
 
 DEFINE_CMD(GPIO_SetValue, data, nread)
 {
-    data->returns = GPIO_SetValue(data->gpioFd, data->value);
+    data->header.returns = GPIO_SetValue(data->gpioFd, data->value);
 }
 END_CMD
 
@@ -78,58 +78,58 @@ DEFINE_CMD(GPIO_GetValue, data, nread)
 {
     GPIO_Value_Type outValue;
 
-    data->returns = GPIO_GetValue(data->gpioFd, &outValue);
+    data->header.returns = GPIO_GetValue(data->gpioFd, &outValue);
     data->outValue = outValue;
 }
 END_CMD
 
 DEFINE_CMD(I2CMaster_Open, data, nread)
 {
-    data->returns = I2CMaster_Open(data->I2C_InterfaceId);
-    ledger_add_file_descriptor(data->returns);
+    data->header.returns = I2CMaster_Open(data->I2C_InterfaceId);
+    ledger_add_file_descriptor(data->header.returns);
 }
 END_CMD
 
 DEFINE_CMD(I2CMaster_SetBusSpeed, data, nread)
 {
-    data->returns = I2CMaster_SetBusSpeed(data->fd, data->speedInHz);
+    data->header.returns = I2CMaster_SetBusSpeed(data->fd, data->speedInHz);
 }
 END_CMD
 
 DEFINE_CMD(I2CMaster_SetTimeout, data, nread)
 {
-    data->returns = I2CMaster_SetTimeout(data->fd, data->timeoutInMs);
+    data->header.returns = I2CMaster_SetTimeout(data->fd, data->timeoutInMs);
 }
 END_CMD
 
 DEFINE_CMD(I2CMaster_Write, data, nread)
 {
-    data->returns = I2CMaster_Write(data->fd, data->address, (const uint8_t *)data->data_block.data, (size_t)data->length);
+    data->header.returns = I2CMaster_Write(data->fd, data->address, (const uint8_t *)data->data_block.data, (size_t)data->length);
 }
 END_CMD
 
 DEFINE_CMD(I2CMaster_WriteThenRead, data, nread)
 {
-    data->returns = I2CMaster_WriteThenRead(data->fd, data->address, (const uint8_t *)data->data_block.data, data->lenWriteData, (uint8_t *)data->data_block.data, data->lenReadData);
+    data->header.returns = I2CMaster_WriteThenRead(data->fd, data->address, (const uint8_t *)data->data_block.data, data->lenWriteData, (uint8_t *)data->data_block.data, data->lenReadData);
 }
 END_CMD
 
 DEFINE_CMD(I2CMaster_Read, data, nread)
 {
-    data->returns = I2CMaster_Read(data->fd, data->address, data->data_block.data, data->maxLength);
+    data->header.returns = I2CMaster_Read(data->fd, data->address, data->data_block.data, data->maxLength);
 }
 END_CMD
 
 DEFINE_CMD(I2CMaster_SetDefaultTargetAddress, data, nread)
 {
-    data->returns = I2CMaster_SetDefaultTargetAddress(data->fd, data->address);
+    data->header.returns = I2CMaster_SetDefaultTargetAddress(data->fd, data->address);
 }
 END_CMD
 
 DEFINE_CMD(PWM_Open, data, nread)
 {
-    data->returns = PWM_Open(data->pwm);
-    ledger_add_file_descriptor(data->returns);
+    data->header.returns = PWM_Open(data->pwm);
+    ledger_add_file_descriptor(data->header.returns);
 }
 END_CMD
 
@@ -141,26 +141,26 @@ DEFINE_CMD(PWM_Apply, data, nread)
     newState.polarity = data->polarity;
     newState.enabled = data->enabled;
 
-    data->returns = PWM_Apply(data->pwmFd, data->pwmChannel, &newState);
+    data->header.returns = PWM_Apply(data->pwmFd, data->pwmChannel, &newState);
 }
 END_CMD
 
 DEFINE_CMD(ADC_Open, data, nread)
 {
-    data->returns = ADC_Open(data->id);
-    ledger_add_file_descriptor(data->returns);
+    data->header.returns = ADC_Open(data->id);
+    ledger_add_file_descriptor(data->header.returns);
 }
 END_CMD
 
 DEFINE_CMD(ADC_GetSampleBitCount, data, nread)
 {
-    data->returns = ADC_GetSampleBitCount(data->fd, data->channel);
+    data->header.returns = ADC_GetSampleBitCount(data->fd, data->channel);
 }
 END_CMD
 
 DEFINE_CMD(ADC_SetReferenceVoltage, data, nread)
 {
-    data->returns = ADC_SetReferenceVoltage(data->fd, data->channel, data->referenceVoltage);
+    data->header.returns = ADC_SetReferenceVoltage(data->fd, data->channel, data->referenceVoltage);
 }
 END_CMD
 
@@ -168,7 +168,7 @@ DEFINE_CMD(ADC_Poll, data, nread)
 {
     uint32_t outSampleValue = 0;
 
-    data->returns = ADC_Poll(data->fd, data->channel, &outSampleValue);
+    data->header.returns = ADC_Poll(data->fd, data->channel, &outSampleValue);
     data->outSampleValue = outSampleValue;
 }
 END_CMD
@@ -179,8 +179,8 @@ DEFINE_CMD(SPIMaster_Open, data, nread)
     config.csPolarity = data->csPolarity;
     config.z__magicAndVersion = data->z__magicAndVersion;
 
-    data->returns = SPIMaster_Open(data->interfaceId, data->chipSelectId, &config);
-    ledger_add_file_descriptor(data->returns);
+    data->header.returns = SPIMaster_Open(data->interfaceId, data->chipSelectId, &config);
+    ledger_add_file_descriptor(data->header.returns);
 }
 END_CMD
 
@@ -188,7 +188,7 @@ DEFINE_CMD(SPIMaster_InitConfig, data, nread)
 {
     SPIMaster_Config config;
 
-    data->returns = SPIMaster_InitConfig(&config);
+    data->header.returns = SPIMaster_InitConfig(&config);
 
     data->csPolarity = config.csPolarity;
     data->z__magicAndVersion = config.z__magicAndVersion;
@@ -197,25 +197,25 @@ END_CMD
 
 DEFINE_CMD(SPIMaster_SetBusSpeed, data, nread)
 {
-    data->returns = SPIMaster_SetBusSpeed(data->fd, data->speedInHz);
+    data->header.returns = SPIMaster_SetBusSpeed(data->fd, data->speedInHz);
 }
 END_CMD
 
 DEFINE_CMD(SPIMaster_SetMode, data, nread)
 {
-    data->returns = SPIMaster_SetMode(data->fd, data->mode);
+    data->header.returns = SPIMaster_SetMode(data->fd, data->mode);
 }
 END_CMD
 
 DEFINE_CMD(SPIMaster_SetBitOrder, data, nread)
 {
-    data->returns = SPIMaster_SetBitOrder(data->fd, data->order);
+    data->header.returns = SPIMaster_SetBitOrder(data->fd, data->order);
 }
 END_CMD
 
 DEFINE_CMD(SPIMaster_WriteThenRead, data, nread)
 {
-    data->returns = SPIMaster_WriteThenRead(data->fd,
+    data->header.returns = SPIMaster_WriteThenRead(data->fd,
                                             (const uint8_t *)data->data_block.data,
                                             data->lenWriteData,
                                             data->data_block.data,
@@ -272,51 +272,51 @@ DEFINE_CMD(SPIMaster_TransferSequential, data, nread)
         }
     }
 
-    data->returns = SPIMaster_TransferSequential(data->fd, transfers, data->transferCount);
+    data->header.returns = SPIMaster_TransferSequential(data->fd, transfers, data->transferCount);
 }
 END_CMD
 
 DEFINE_CMD(Storage_OpenMutableFile, data, nread)
 {
-    data->returns = Storage_OpenMutableFile();
-    ledger_add_file_descriptor(data->returns);
+    data->header.returns = Storage_OpenMutableFile();
+    ledger_add_file_descriptor(data->header.returns);
 }
 END_CMD
 
 DEFINE_CMD(Storage_DeleteMutableFile, data, nread)
 {
-    data->returns = Storage_DeleteMutableFile();
+    data->header.returns = Storage_DeleteMutableFile();
 }
 END_CMD
 
 DEFINE_CMD(RemoteX_Write, data, nread)
 {
-    data->returns = write(data->fd, data->data_block.data, (size_t)data->length);
+    data->header.returns = write(data->fd, data->data_block.data, (size_t)data->length);
 }
 END_CMD
 
 DEFINE_CMD(RemoteX_Read, data, nread)
 {
-    data->returns = read(data->fd, data->data_block.data, (size_t)data->length);
+    data->header.returns = read(data->fd, data->data_block.data, (size_t)data->length);
 }
 END_CMD
 
 DEFINE_CMD(RemoteX_Lseek, data, nread)
 {
-    data->returns = (int)lseek(data->fd, data->offset, data->whence);
+    data->header.returns = (int)lseek(data->fd, data->offset, data->whence);
 }
 END_CMD
 
 DEFINE_CMD(RemoteX_Close, data, nread)
 {
-    data->returns = close(data->fd);
+    data->header.returns = close(data->fd);
     ledger_remove_file_descriptor(data->fd);
 }
 END_CMD
 
 DEFINE_CMD(RemoteX_PlatformInformation, data, nread)
 {
-    data->returns = snprintf(data->data_block.data, (size_t)data->length, "Device platform: %s, Firmware version: %s", DEVICE_PLATFORM, FIRMWARE_VERSION);
+    data->header.returns = snprintf(data->data_block.data, (size_t)data->length, "Device platform: %s, Firmware version: %s", DEVICE_PLATFORM, FIRMWARE_VERSION);
 }
 END_CMD
 
@@ -333,7 +333,7 @@ DEFINE_CMD(UART_Open, data, nread)
     uint8_t *data_ptr = data->data_block.data;
     UART_Config *uartConfig = (UART_Config *)data_ptr;
 
-    data->returns = UART_Open(data->uartId, uartConfig);
-    ledger_add_file_descriptor(data->returns);
+    data->header.returns = UART_Open(data->uartId, uartConfig);
+    ledger_add_file_descriptor(data->header.returns);
 }
 END_CMD

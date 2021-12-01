@@ -21,7 +21,7 @@
         command##_t *data = (command##_t *)buf;
 
 #define END_CMD           \
-    data->err_no = errno; \
+    data->header.err_no = errno; \
     return 0;             \
     }
 
