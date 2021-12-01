@@ -135,13 +135,10 @@ END_CMD
 
 DEFINE_CMD(PWM_Apply, data, nread)
 {
-    PwmState newState;
-    newState.period_nsec = data->period_nsec;
-    newState.dutyCycle_nsec = data->dutyCycle_nsec;
-    newState.polarity = data->polarity;
-    newState.enabled = data->enabled;
+    uint8_t *data_ptr = data->data_block.data;
+    PwmState *newState = (PwmState *)data_ptr;
 
-    data->header.returns = PWM_Apply(data->pwmFd, data->pwmChannel, &newState);
+    data->header.returns = PWM_Apply(data->pwmFd, data->pwmChannel, newState);
 }
 END_CMD
 
@@ -175,23 +172,19 @@ END_CMD
 
 DEFINE_CMD(SPIMaster_Open, data, nread)
 {
-    SPIMaster_Config config;
-    config.csPolarity = data->csPolarity;
-    config.z__magicAndVersion = data->z__magicAndVersion;
+    uint8_t *data_ptr = data->data_block.data;
+    SPIMaster_Config *config = (SPIMaster_Config *)data_ptr;
 
-    data->header.returns = SPIMaster_Open(data->interfaceId, data->chipSelectId, &config);
+    data->header.returns = SPIMaster_Open(data->interfaceId, data->chipSelectId, config);
     ledger_add_file_descriptor(data->header.returns);
 }
 END_CMD
 
 DEFINE_CMD(SPIMaster_InitConfig, data, nread)
 {
-    SPIMaster_Config config;
-
-    data->header.returns = SPIMaster_InitConfig(&config);
-
-    data->csPolarity = config.csPolarity;
-    data->z__magicAndVersion = config.z__magicAndVersion;
+    uint8_t *data_ptr = data->data_block.data;
+    SPIMaster_Config *config = (SPIMaster_Config *)data_ptr;
+    data->header.returns = SPIMaster_InitConfig(config);
 }
 END_CMD
 
@@ -216,10 +209,10 @@ END_CMD
 DEFINE_CMD(SPIMaster_WriteThenRead, data, nread)
 {
     data->header.returns = SPIMaster_WriteThenRead(data->fd,
-                                            (const uint8_t *)data->data_block.data,
-                                            data->lenWriteData,
-                                            data->data_block.data,
-                                            data->lenReadData);
+                                                   (const uint8_t *)data->data_block.data,
+                                                   data->lenWriteData,
+                                                   data->data_block.data,
+                                                   data->lenReadData);
 }
 END_CMD
 

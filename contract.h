@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 
-#define REMOTEX_CONTRACT_VERSION 6
+#define REMOTEX_CONTRACT_VERSION 7
 
 typedef enum __attribute__((packed))
 {
@@ -168,10 +168,7 @@ typedef struct __attribute__((packed))
     CTX_HEADER header;
     int32_t pwmFd;
     uint32_t pwmChannel;
-    uint32_t period_nsec;
-    uint32_t dutyCycle_nsec;
-    uint32_t polarity;
-    bool enabled;
+    DATA_BLOCK data_block; // Must be the last element in the struct
 } PWM_Apply_t;
 
 typedef struct __attribute__((packed))
@@ -208,15 +205,13 @@ typedef struct __attribute__((packed))
     CTX_HEADER header;
     int32_t interfaceId;
     int32_t chipSelectId;
-    uint8_t csPolarity;
-    uint32_t z__magicAndVersion;
+    DATA_BLOCK data_block; // Must be the last element in the struct
 } SPIMaster_Open_t;
 
 typedef struct __attribute__((packed))
 {
     CTX_HEADER header;
-    uint8_t csPolarity;
-    uint32_t z__magicAndVersion;
+    DATA_BLOCK data_block; // Must be the last element in the struct
 } SPIMaster_InitConfig_t;
 
 typedef struct __attribute__((packed))
