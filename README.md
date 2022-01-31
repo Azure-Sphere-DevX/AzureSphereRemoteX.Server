@@ -2,7 +2,7 @@
 
 Remote GPIO application.
 
-Refer to the [Intro-to-Azure-Sphere-RemoteX](https://github.com/Azure-Sphere-DevX/DesktopDevX.Examples/wiki/02-Intro-to-Azure-Sphere-RemoteX) video for information on the AzureSphereRemoteX Server and Client Library.
+Refer to the [DesktopDevX and RemoteX wiki]](https://github.com/Azure-Sphere-DevX/DesktopDevX.Examples/wiki) video for information on the AzureSphereRemoteX Server and Client Library.
 
 ## Architecture
 
