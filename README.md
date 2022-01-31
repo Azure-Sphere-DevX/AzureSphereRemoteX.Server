@@ -2,13 +2,18 @@
 
 Remote GPIO application.
 
+Refer to the [Intro-to-Azure-Sphere-RemoteX](https://github.com/Azure-Sphere-DevX/DesktopDevX.Examples/wiki/02-Intro-to-Azure-Sphere-RemoteX) video for information on the AzureSphereRemoteX Server and Client Library.
+
+## Architecture
+
+[![ Azure Sphere RemoteX](https://github.com/Azure-Sphere-DevX/DesktopDevX.Examples/wiki/media/AzureSphereRemoteX.png)](https://youtu.be/jWPutk1xNt8)
+
+
 ## Clone
 
 ```
 git clone --recurse-submodules https://github.com/Azure-Sphere-DevX/AzureSphereRemoteX.git
 ```
-
-
 
 ---
 
