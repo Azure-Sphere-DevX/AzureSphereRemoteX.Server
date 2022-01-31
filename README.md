@@ -1,4 +1,4 @@
-# Azure Sphere RemoteX
+# Azure Sphere RemoteX Server
 
 The RemoteX project provides remote access to Azure Sphere peripherals from a POSIX C application. The project is similar in nature to the [Raspberry Pi Remote GPIO](https://gpiozero.readthedocs.io/en/stable/remote_gpio.html) with the [pigpio C Interface](http://abyz.me.uk/rpi/pigpio/cif.html) and [Arduino Firmata](https://docs.arduino.cc/hacking/software/FirmataLibrary) projects. 
 
